@@ -86,3 +86,24 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    .scrollbar-thumb-transparent::-webkit-scrollbar-thumb {
+        background: transparent;
+    }
+
+    .scrollbar-thumb-gray-400::-webkit-scrollbar-thumb {
+        background: #8888883f;
+        border-radius: 3px;
+    }
+
+    .scrollbar-thumb-opacity-100::-webkit-scrollbar-thumb {
+        opacity: 1 !important;
+    }
+}
+
+

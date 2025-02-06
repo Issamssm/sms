@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import Link from "next/link"
 
 import { NavQuick } from "@/components/sidebar/nav-quick"
@@ -16,26 +15,31 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar"
 import { data } from "@/navigation"
+import { useDashboardId } from "@/hooks/use-dashboard-id"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const dashboardId = useDashboardId();
 
     return (
-        <Sidebar collapsible="offcanvas" {...props}>
+        <Sidebar collapsible="offcanvas" {...props} className="group/sidebar">
             <SidebarHeader className="flex items-start p-4">
                 <Link href="/" className="flex items-center space-x-2">
-                    <Image alt="Logo" src={"/logo.svg"} width={50} height={50} className="h-6 w-6" />
-                    <span className="text-xl font-bold text-black group-data-[collapsible=icon]:hidden">StockMate</span>
+                    <span className="text-xl font-bold text-black group-data-[collapsible=icon]:hidden">
+                        StockMate
+                    </span>
                 </Link>
             </SidebarHeader>
-            <SidebarContent className="gap-0">
-                <NavGroupe items={data.navMain} label="General"/>
-                <NavGroupe items={data.navSupport} label="Support & contact"/>
-                <NavQuick items={data.quickLinks} />
+            <SidebarContent className="overflow-y-auto scrollbar-thin scrollbar-thumb-transparent group-hover/sidebar:scrollbar-thumb-gray-400 group-hover/sidebar:scrollbar-thumb-opacity-100">
+                <NavQuick items={data.General} label="General" dashboardId={dashboardId} />
+                <NavQuick items={data.quickLinks} label="Partners" dashboardId={dashboardId} />
+                <NavGroupe items={data.navMain} label="Support & Reports" dashboardId={dashboardId}/>
             </SidebarContent>
             <SidebarFooter>
                 <NavUser />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>
-    )
+    );
 }
+
+

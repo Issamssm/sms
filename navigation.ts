@@ -1,8 +1,11 @@
 import {
+    Boxes,
     FileTextIcon,
     LayoutDashboard,
     LifeBuoy,
+    Package,
     ShoppingCart,
+    Tag,
     Truck,
     Users,
     type LucideIcon,
@@ -24,25 +27,26 @@ interface QuickLink {
     url: string;
     icon: LucideIcon;
 }
+interface GeneralLink {
+    name: string;
+    url: string;
+    icon: LucideIcon;
+}
 
 export interface Data {
+    General: GeneralLink[];
     navMain: NavSection[];
-    navSupport: NavSection[];
     quickLinks: QuickLink[];
 }
 
 export const data: Data = {
+    General: [
+        { name: "Dashboard", url: "/", icon: LayoutDashboard },
+        { name: "Products", url: "/products", icon: Package },
+        { name: "Inventories", url: "/inventories", icon: Boxes },
+        { name: "Categories", url: "/categories", icon: Tag },
+    ],
     navMain: [
-        {
-            title: "Dashboard",
-            icon: LayoutDashboard,
-            items: [
-                { title: "Overview", url: "/" },
-                { title: "Products", url: "/products" },
-                { title: "Inventories", url: "/inventories" },
-                { title: "Categories", url: "/categories" },
-            ],
-        },
         {
             title: "Reports",
             icon: FileTextIcon,
@@ -52,8 +56,6 @@ export const data: Data = {
                 { title: "Customer Reports", url: "/customer-reports" },
             ],
         },
-    ],
-    navSupport: [
         {
             title: "Help & Support",
             icon: LifeBuoy,
