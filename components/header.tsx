@@ -30,7 +30,6 @@ export default function Header() {
         if (normalizedPath === "/") return ["Dashboard"];
 
         const generalItem = data.General.find(item => {
-            console.log("Checking General:", item.name, "=>", item.url);
             return item.url === normalizedPath;
         });
 
@@ -40,7 +39,6 @@ export default function Header() {
 
         for (const section of data.navMain) {
             const foundItem = section.items.find(item => {
-                console.log("Checking navMain:", section.title, item.title, "=>", item.url);
                 return item.url === normalizedPath;
             });
 
@@ -50,7 +48,6 @@ export default function Header() {
         }
 
         const quickLink = data.quickLinks.find(link => {
-            console.log("Checking QuickLinks:", link.name, "=>", link.url);
             return link.url === normalizedPath;
         });
 

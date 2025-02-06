@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -16,9 +10,84 @@ datasource db {
 model Dashboard {
   id                String          @id @default(uuid())
   userId            String
-  // products          Product[] 
-  // categories        Category[]
+  products          Product[] 
+  categories        Category[]
   // inventories       Inventory[]
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+enum ProductStatus {
+  AVAILABLE
+  OUT_OF_STOCK
+  LOW_STOCK
+}
+
+enum ProductStocks {
+  FIFO
+  LIFO
+  CUMP
+  HPP
+  LPP
+  MANUAL
+}
+
+enum ProductPrice {
+  WAC
+  LPP
+  HSP
+  LSP
+  MANUAL
+}
+
+enum MeasurementUnit {
+  PIECE
+  KILOGRAM
+  GRAM
+  LITER 
+  MILLILITER 
+  METER 
+  CENTIMETER 
+  MILLIMETER 
+  BOX 
+  PACK 
+  DOZEN
+  NONE
+}
+
+
+model Product {
+  id                String          @id @default(uuid())
+  name              String
+  description       String?
+  imageUrl          String?
+  status            ProductStatus   @default(AVAILABLE)
+  sellingPrice      Decimal?        @default(0)
+  dashboardId       String
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  categoryId        String?
+  category          Category?       @relation(fields: [categoryId], references: [id])
+  stockMethode      ProductStocks   @default(MANUAL)
+  priceMethode      ProductPrice    @default(MANUAL)
+  minInventory      Int?            @default(0)
+  warehouseLocation String?
+  measureUnit       MeasurementUnit @default(NONE)
+
+  // inventories       Inventory[]
+  // supplier          Supplier[]
+  // customer          Customer[]
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model Category {
+  id                String          @id @default(uuid())
+  name              String
+  dashboardId       String
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  products          Product[] 
 
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt

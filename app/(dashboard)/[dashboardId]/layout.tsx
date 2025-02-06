@@ -14,7 +14,7 @@ export default async function Layout({
 }) {
 
     const { userId } = await auth();
-    const { dashboardId } = params
+    const { dashboardId } = await params
 
     if (!userId) {
         redirect('/sign-in');
