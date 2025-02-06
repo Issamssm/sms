@@ -1,3 +1,4 @@
+import db from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -12,27 +13,25 @@ export default async function SetupLayout({
         redirect('/sign-in');
     }
 
-    console.log(userId)
+    const dashboard = await db.dashboard.findFirst({
+        where: {
+            userId,
+        }
+    });
 
-    // const dashboard = await db.dashboard.findFirst({
-    //     where: {
-    //         userId,
-    //     }
-    // });
+    if (!dashboard) {
+        const newDashboard = await db.dashboard.create({
+            data: {
+                userId,
+            },
+        });
 
-    // if (!dashboard) {
-    //     const newDashboard = await db.dashboard.create({
-    //         data: {
-    //             userId,
-    //         },
-    //     });
+        redirect(`/${newDashboard.id}`);
+    }
 
-    //     redirect(`/${newDashboard.id}`);
-    // }
-
-    // if (dashboard) {
-    //     redirect(`/${dashboard.id}`);
-    // }
+    if (dashboard) {
+        redirect(`/${dashboard.id}`);
+    }
 
     return (
         <>
