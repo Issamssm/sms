@@ -12,6 +12,7 @@ model Dashboard {
   userId            String
   products          Product[] 
   categories        Category[]
+  autoUpdateStatus  Boolean         @default(true)
   // inventories       Inventory[]
 
   createdAt         DateTime        @default(now())
@@ -62,7 +63,7 @@ model Product {
   name              String
   description       String?
   imageUrl          String?
-  status            ProductStatus   @default(AVAILABLE)
+  status            ProductStatus   @default(OUT_OF_STOCK)
   sellingPrice      Decimal?        @default(0)
   dashboardId       String
   dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])

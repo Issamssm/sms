@@ -48,7 +48,7 @@ export const useConfirm = (
                         {message}
                     </DialogDescription>
                 </DialogHeader>
-                <DialogFooter className="pt-2">
+                <DialogFooter className="pt-2 gap-2">
                     <Button
                         onClick={handleCancel}
                         variant={"outline"}

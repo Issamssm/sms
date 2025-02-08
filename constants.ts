@@ -34,9 +34,9 @@ export const MeasurementUnitSchema = z.enum(MeasurementUnits);
 
 export const ProductStatuses = ["AVAILABLE", "OUT_OF_STOCK", "LOW_STOCK"] as const;
 export const ProductStatusesWithLabel = [
-    { value: "AVAILABLE", label: "Available" },
-    { value: "OUT_OF_STOCK", label: "Out of Stock" },
-    { value: "LOW_STOCK", label: "Low Stock" },
+    { value: "AVAILABLE", label: "Available", color: "bg-green-500" },
+    { value: "OUT_OF_STOCK", label: "Out of Stock", color: "bg-red-500" },
+    { value: "LOW_STOCK", label: "Low Stock", color: "bg-yellow-500" },
 ] as const;
 export const ProductStatusSchema = z.enum(ProductStatuses);
 

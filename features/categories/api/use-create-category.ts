@@ -25,7 +25,7 @@ export const useCreateCategorie = (dashboardId: string) => {
         RequestType
     >({
         mutationFn: async (json) => {
-            const response = await axios.post(`/api/categories?dashboardId=${dashboardId}`, json);
+            const response = await axios.post(`/api/category?dashboardId=${dashboardId}`, json);
             return response.data;
         },
         onSuccess: () => {

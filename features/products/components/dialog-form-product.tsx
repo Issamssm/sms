@@ -39,26 +39,30 @@ import { createProductFormSchema } from "@/schema/products"
 type ProductFormValues = z.infer<typeof createProductFormSchema>
 
 type Props = {
+    autoUpdate: boolean | undefined;
     dashboardId: string;
     onSubmit: (values: ProductFormValues) => void;
     disabled?: boolean;
     categoryOptions: { label: string; value: string }[];
     onCreateCategory: (name: string) => void;
+    onClose: () => void;
 }
 
 export const DialogFormProduct = ({
+    autoUpdate,
     dashboardId,
     onSubmit,
     disabled,
     categoryOptions,
-    onCreateCategory
+    onCreateCategory,
+    onClose
 }: Props) => {
 
     const form = useForm<ProductFormValues>({
         resolver: zodResolver(createProductFormSchema),
         defaultValues: {
             name: "",
-            status: "AVAILABLE",
+            status: "OUT_OF_STOCK",
             categoryId: null,
             sellingPrice: 0,
             priceMethode: "MANUAL",
@@ -105,34 +109,9 @@ export const DialogFormProduct = ({
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Product name" {...field} />
+                                        <Input placeholder="Product name" {...field} disabled={disabled} />
                                     </FormControl>
                                     <FormDescription>Enter the name of the product.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Status</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select product status" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {ProductStatusesWithLabel.map((status) => (
-                                                <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormDescription>
-                                        Select the current status of the product, or you can set it manually or automatically from the settings.
-                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -158,6 +137,40 @@ export const DialogFormProduct = ({
                                 </FormItem>
                             )}
                         />
+                        <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Status {" "}
+                                        {
+                                            autoUpdate ? (
+                                                <span className="text-xs text-red-500">
+                                                    (Automatically determined)
+                                                </span>
+                                            ) : ""
+                                        }
+                                    </FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger disabled={autoUpdate || disabled}>
+                                                <SelectValue placeholder="Select product status" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {ProductStatusesWithLabel.map((status) => (
+                                                <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormDescription>
+                                        Select the current status of the product, or you can set it manually or automatically from the settings.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </TabsContent>
                     <TabsContent value="pricing" className="space-y-4">
                         <FormField
@@ -172,7 +185,7 @@ export const DialogFormProduct = ({
                                             step="0.01"
                                             placeholder="0.00"
                                             {...field}
-                                            disabled={selectedPriceMethod !== "MANUAL"}
+                                            disabled={selectedPriceMethod !== "MANUAL" || disabled}
                                             value={selectedPriceMethod === "MANUAL" ? field.value : "0"}
                                         />
                                     </FormControl>
@@ -189,7 +202,7 @@ export const DialogFormProduct = ({
                                     <FormLabel>Price Method</FormLabel>
                                     <Select onValueChange={handlePriceMethodChange} defaultValue={field.value}>
                                         <FormControl>
-                                            <SelectTrigger>
+                                            <SelectTrigger disabled={disabled}>
                                                 <SelectValue placeholder="Select price method" />
                                             </SelectTrigger>
                                         </FormControl>
@@ -214,7 +227,7 @@ export const DialogFormProduct = ({
                                     <FormLabel>Stock Method</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
-                                            <SelectTrigger>
+                                            <SelectTrigger disabled={disabled}>
                                                 <SelectValue placeholder="Select stock method" />
                                             </SelectTrigger>
                                         </FormControl>
@@ -236,7 +249,7 @@ export const DialogFormProduct = ({
                                 <FormItem>
                                     <FormLabel>Minimum Inventory</FormLabel>
                                     <FormControl>
-                                        <Input type="number" placeholder="0" {...field} />
+                                        <Input type="number" placeholder="0" {...field} disabled={disabled} />
                                     </FormControl>
                                     <FormDescription>Enter the minimum inventory level for the product.</FormDescription>
                                     <FormMessage />
@@ -251,7 +264,7 @@ export const DialogFormProduct = ({
                                     <FormLabel>Measurement Unit</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
-                                            <SelectTrigger>
+                                            <SelectTrigger disabled={disabled}>
                                                 <SelectValue placeholder="Select measurement unit" />
                                             </SelectTrigger>
                                         </FormControl>
@@ -268,7 +281,12 @@ export const DialogFormProduct = ({
                         />
                     </TabsContent>
                 </Tabs>
-                <Button type="submit">Save Product</Button>
+                <Button type="submit" disabled={disabled}>
+                    Save Product
+                </Button>
+                <Button type="button" variant={"outline"} onClick={onClose} className="ml-4">
+                    Cancel
+                </Button>
             </form>
         </Form>
     )

@@ -13,12 +13,23 @@ import {
     SidebarFooter,
     SidebarHeader,
     SidebarRail,
+    useSidebar,
 } from "@/components/ui/sidebar"
 import { data } from "@/navigation"
 import { useDashboardId } from "@/hooks/use-dashboard-id"
+import { useEffect } from "react"
+import { usePathname } from "next/navigation"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const dashboardId = useDashboardId();
+    const pathname = usePathname();
+    const { setOpenMobile, isMobile } = useSidebar();
+
+    useEffect(() => {
+        if (isMobile) {
+            setOpenMobile(false);
+        }
+    }, [pathname, isMobile, setOpenMobile]);
 
     return (
         <Sidebar collapsible="offcanvas" {...props} className="group/sidebar">

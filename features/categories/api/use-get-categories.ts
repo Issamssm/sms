@@ -16,7 +16,7 @@ export const useGetCategories = (dashboardId: string) => {
         queryKey: ["categories", dashboardId],
         queryFn: async (): Promise<ResponseType> => {
             try {
-                const response = await axios.get<ResponseType>(`/api/categories?dashboardId=${dashboardId}`);
+                const response = await axios.get<ResponseType>(`/api/category?dashboardId=${dashboardId}`);
                 return response.data;
             } catch (error) {
                 console.error("Error fetching categories:", error);

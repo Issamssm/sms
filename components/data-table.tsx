@@ -74,7 +74,7 @@ export function DataTable<TData, TValue>({
     return (
         <div>
             <ConfirmDialog />
-            <div className="flex items-center py-4">
+            <div className="flex items-center py-4 gap-1">
                 <Input
                     placeholder={`Filter ${filterKey}...`}
                     value={(table.getColumn(`${filterKey}`)?.getFilterValue() as string) ?? ""}
@@ -88,7 +88,7 @@ export function DataTable<TData, TValue>({
                         size={"sm"}
                         disabled={disabled}
                         variant={"outline"}
-                        className="ml-auto font-normal text-xs"
+                        className="ml-auto font-normal text-xs h-10"
                         onClick={async () => {
                             const ok = await confirm()
 
