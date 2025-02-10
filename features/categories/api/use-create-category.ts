@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import toast from 'react-hot-toast';
 
 
@@ -21,7 +21,7 @@ export const useCreateCategorie = (dashboardId: string) => {
 
     const mutation = useMutation<
         ResponseType,
-        Error,
+        AxiosError,
         RequestType
     >({
         mutationFn: async (json) => {
@@ -32,9 +32,14 @@ export const useCreateCategorie = (dashboardId: string) => {
             toast.success("Categorie created");
             queryClient.invalidateQueries({ queryKey: ["categories", dashboardId] });
         },
-        onError: () => {
-            toast.error("Failed to create categorie");
-        },
+        onError: (error: AxiosError) => {
+            const errorMessage = (error.response?.data as { message: string })?.message;
+
+            if (errorMessage) {
+                toast.error(errorMessage);
+            } else {
+                toast.error("Failed to create category");
+            }        },
     });
 
     return mutation;

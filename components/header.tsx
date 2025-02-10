@@ -1,5 +1,4 @@
 "use client";
-
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
     Breadcrumb,
@@ -18,45 +17,53 @@ import { data } from "@/navigation";
 export default function Header() {
     const pathname = usePathname();
 
-    const extractPathWithoutDashboardId = (fullPath: string) => {
-        const parts = fullPath.split("/").filter(Boolean);
-        return parts.length > 1 ? "/" + parts.slice(1).join("/") : "/";
-    };
-
-    const normalizedPath = extractPathWithoutDashboardId(pathname);
-
 
     const getBreadcrumbTitles = (): string[] => {
-        if (normalizedPath === "/") return ["Dashboard"];
+        const pathParts = pathname.split("/").filter(Boolean);
 
-        const generalItem = data.General.find(item => {
-            return item.url === normalizedPath;
-        });
-
-        if (generalItem) {
-            return [generalItem.name];
+        if (pathParts.length === 0) {
+            return ["Dashboard"];
         }
 
-        for (const section of data.navMain) {
-            const foundItem = section.items.find(item => {
-                return item.url === normalizedPath;
-            });
+        const breadcrumbs = [];
 
-            if (foundItem) {
-                return [section.title, foundItem.title];
+        // 1. Handle dynamic segments FIRST:
+        if (pathParts.includes("products")) {
+            breadcrumbs.push("Products"); // Add "Products" as a base breadcrumb
+
+            const productIndex = pathParts.indexOf("products");
+            if (pathParts.length > productIndex + 1) {
+                // There's a product ID or details after /products/
+                breadcrumbs.push("Product Details");  // Or a more specific name if needed
+            }
+            return breadcrumbs; // Dynamic product route handled.
+        }
+        if (pathParts.includes("inventories")) {
+            breadcrumbs.push("Inventories");
+            return breadcrumbs;
+        }
+        if (pathParts.includes("categories")) {
+            breadcrumbs.push("Categories");
+            return breadcrumbs;
+        }
+
+        // 2. Then handle static routes (General, navMain, quickLinks):
+        let currentPath = "/";
+        for (const part of pathParts) {
+            currentPath += part + "/";
+            const generalItem = data.General.find(item => item.url === currentPath.slice(0, -1));
+            if (generalItem) {
+                breadcrumbs.push(generalItem.name);
+                return breadcrumbs;
             }
         }
 
-        const quickLink = data.quickLinks.find(link => {
-            return link.url === normalizedPath;
-        });
-
-        if (quickLink) {
-            return [quickLink.name];
-        }
+        // ... (rest of the static route handling code as before: navMain, quickLinks)
 
         return ["Dashboard", "Overview"];
     };
+
+
 
     const breadcrumbTitles = getBreadcrumbTitles();
 

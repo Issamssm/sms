@@ -12,6 +12,7 @@ type ResponseType = {
     category: {
         name: string;
     } | null;
+    currentStock: Decimal | null;
 }[];
 
 export const useGetProducts = (dashboardId: string) => {

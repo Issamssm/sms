@@ -31,6 +31,7 @@ interface GeneralLink {
     name: string;
     url: string;
     icon: LucideIcon;
+    items?: NavItem[];
 }
 
 export interface Data {
@@ -42,10 +43,18 @@ export interface Data {
 export const data: Data = {
     General: [
         { name: "Dashboard", url: "/", icon: LayoutDashboard },
-        { name: "Products", url: "/products", icon: Package },
+        {
+            name: "Products",
+            url: "/products",
+            icon: Package,
+            items: [
+                { title: "Product Details", url: "/product/:id" },
+            ]
+        },
         { name: "Inventories", url: "/inventories", icon: Boxes },
         { name: "Categories", url: "/categories", icon: Tag },
     ],
+
     navMain: [
         {
             title: "Reports",

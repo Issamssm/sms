@@ -33,7 +33,8 @@ export async function GET(
                     select: {
                         name: true
                     }
-                }
+                },
+                currentStock: true
             }
         });
 
@@ -74,6 +75,17 @@ export async function POST(
             return NextResponse.json({ message: "Dashboard ID is required" }, { status: 400 });
         }
 
+        const existingProduct = await db.product.findFirst({
+            where: {
+                name: name,
+                dashboardId: dashboardId
+            }
+        });
+
+        if (existingProduct) {
+            return NextResponse.json({ message: "Product name already exists" }, { status: 400 });
+        }
+
         const product = await db.product.create({
             data: {
                 dashboardId,
@@ -96,7 +108,8 @@ export async function POST(
                     select: {
                         name: true
                     }
-                }
+                },
+                currentStock: true
             }
         });
 
@@ -106,6 +119,7 @@ export async function POST(
         return new NextResponse("Internal error", { status: 500 });
     }
 };
+
 
 export async function DELETE(
     req: Request,

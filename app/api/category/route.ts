@@ -62,6 +62,17 @@ export async function POST(
         if (!dashboardId) {
             return NextResponse.json({ message: "Dashboard ID is required" }, { status: 400 });
         }
+
+        const existingCategory = await db.category.findFirst({
+            where: {
+                name: name,
+                dashboardId: dashboardId
+            }
+        });
+
+        if (existingCategory) {
+            return NextResponse.json({ message: "Category name already exists" }, { status: 400 });
+        }
         
         const category = await db.category.create({
             data: {

@@ -8,10 +8,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { AddProductDialog } from '@/features/products/components/add-product-dialog'
 import { useGetProducts } from '@/features/products/api/use-get-products'
 import { useBulkDeleteProducts } from '@/features/products/api/use-bulkdelete-product'
+import { useGetAutoUpdateStatus } from '@/features/dashboard/api/use-get-autoUpdateStatus'
 
 import { useDashboardId } from '@/hooks/use-dashboard-id'
 
 import { Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 
 const ProductsPage = () => {
@@ -19,15 +21,17 @@ const ProductsPage = () => {
   const dashboardId = useDashboardId()
   const productsQuery = useGetProducts(dashboardId)
   const deleteProducts = useBulkDeleteProducts(dashboardId)
-  const products = productsQuery.data || []
+  const autoUpdateQuery = useGetAutoUpdateStatus(dashboardId)
 
+  const products = productsQuery.data || []
+  const autoUpdateStatus = autoUpdateQuery.data?.autoUpdateStatus
   const isDisabled = productsQuery.isLoading || deleteProducts.isPending;
 
 
-  if (productsQuery.isLoading) {
+  if (productsQuery.isLoading || autoUpdateQuery.isLoading) {
     return (
       <div className="mx-auto w-full px-4 md:px-6 py-4">
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex items-center justify-between mb-12 gap-3">
           <h1 className="text-xl line-clamp-1 font-semibold tracking-tight md:p-0">
             <Skeleton className="h-8 w-48" />
           </h1>
@@ -49,10 +53,13 @@ const ProductsPage = () => {
           </h1>
           <div className="text-sm text-gray-500 mb-4 md:max-w-xl">
             Here you can manage and view all the products associated with your dashboard.
-             You can create and delete products, and navigate to the product page to edit it.
+            You can create and delete products, and navigate to the product page to edit it.
           </div>
         </div>
-        <AddProductDialog dashboardId={dashboardId} />
+        <AddProductDialog
+          dashboardId={dashboardId}
+          autoUpdateStatus={autoUpdateStatus}
+        />
       </div>
       <DataTable
         columns={columns}
@@ -60,7 +67,14 @@ const ProductsPage = () => {
         filterKey="name"
         onDelete={(row) => {
           const ids = row.map((r) => r.original.id);
-          deleteProducts.mutate({ ids });
+          toast.promise(
+            deleteProducts.mutateAsync({ ids }),
+            {
+              loading: "Deleting products...",
+              success: "Products deleted successfully",
+              error: "Failed to delete products",
+            }
+          );
         }}
         disabled={isDisabled}
       />

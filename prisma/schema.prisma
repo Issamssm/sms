@@ -71,7 +71,8 @@ model Product {
   category          Category?       @relation(fields: [categoryId], references: [id])
   stockMethode      ProductStocks   @default(MANUAL)
   priceMethode      ProductPrice    @default(MANUAL)
-  minInventory      Decimal?            @default(0)
+  minInventory      Decimal?        @default(0)
+  currentStock      Decimal?        @default(0)
   warehouseLocation String?
   measureUnit       MeasurementUnit @default(NONE)
 

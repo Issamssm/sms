@@ -46,6 +46,7 @@ type Props = {
     categoryOptions: { label: string; value: string }[];
     onCreateCategory: (name: string) => void;
     onClose: () => void;
+    isLoading: boolean
 }
 
 export const DialogFormProduct = ({
@@ -55,7 +56,8 @@ export const DialogFormProduct = ({
     disabled,
     categoryOptions,
     onCreateCategory,
-    onClose
+    onClose,
+    isLoading
 }: Props) => {
 
     const form = useForm<ProductFormValues>({
@@ -84,12 +86,8 @@ export const DialogFormProduct = ({
         }
     };
 
-
     const handleSubmit = (values: ProductFormValues) => {
-        onSubmit({
-            ...values
-        });
-        form.reset();
+        onSubmit(values);
     }
 
     return (
@@ -130,7 +128,7 @@ export const DialogFormProduct = ({
                                             onCreate={onCreateCategory}
                                             value={field.value}
                                             onChange={field.onChange}
-                                            disabled={disabled}
+                                            disabled={disabled || isLoading}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -184,6 +182,7 @@ export const DialogFormProduct = ({
                                             type="number"
                                             step="0.01"
                                             placeholder="0.00"
+                                            min={0}
                                             {...field}
                                             disabled={selectedPriceMethod !== "MANUAL" || disabled}
                                             value={selectedPriceMethod === "MANUAL" ? field.value : "0"}
@@ -249,7 +248,7 @@ export const DialogFormProduct = ({
                                 <FormItem>
                                     <FormLabel>Minimum Inventory</FormLabel>
                                     <FormControl>
-                                        <Input type="number" placeholder="0" {...field} disabled={disabled} />
+                                        <Input type="number" placeholder="0" min={0} {...field} disabled={disabled} />
                                     </FormControl>
                                     <FormDescription>Enter the minimum inventory level for the product.</FormDescription>
                                     <FormMessage />

@@ -22,6 +22,7 @@ type ResponseType = {
     category: {
         name: string;
     } | null;
+    currentStock: Decimal | null;
 };
 
 export const columns: ColumnDef<ResponseType>[] = [
@@ -62,30 +63,6 @@ export const columns: ColumnDef<ResponseType>[] = [
         }
     },
     {
-        accessorKey: "status",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    status
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            const status = ProductStatusesWithLabel.find(s => s.value === row.original.status);
-
-            return (
-                <div className="flex gap-2 items-center">
-                    <div className={`size-4 rounded-full ${status?.color || "bg-gray-500"}`} />
-                    {status?.label || "Unknown"}
-                </div>
-            );
-        }
-    },
-    {
         accessorKey: "category",
         header: ({ column }) => {
             return (
@@ -122,7 +99,7 @@ export const columns: ColumnDef<ResponseType>[] = [
         },
     },
     {
-        accessorKey: "quantity",
+        accessorKey: "currentStock",
         header: ({ column }) => {
             return (
                 <Button
@@ -133,15 +110,31 @@ export const columns: ColumnDef<ResponseType>[] = [
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        cell: ({ row }) => {
+        }
+    },
+    {
+        accessorKey: "status",
+        header: ({ column }) => {
             return (
-                <div>
-                    4834
-                </div>
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    status
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
             )
         },
+        cell: ({ row }) => {
+            const status = ProductStatusesWithLabel.find(s => s.value === row.original.status);
+
+            return (
+                <div className="flex gap-2 items-center">
+                    <div className={`size-4 rounded-full ${status?.color || "bg-gray-500"}`} />
+                    {status?.label || "Unknown"}
+                </div>
+            );
+        }
     },
     {
         id: "actions",

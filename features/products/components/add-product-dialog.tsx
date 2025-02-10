@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { z } from "zod"
-import { Loader, Plus } from "lucide-react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -16,18 +17,20 @@ import { DialogFormProduct } from "./dialog-form-product"
 
 import { useGetCategories } from "@/features/categories/api/use-get-categories"
 import { useCreateCategorie } from "@/features/categories/api/use-create-category"
-import { useGetAutoUpdateStatus } from "@/features/dashboard/api/use-get-autoUpdateStatus"
 import { useCreateProduct } from "@/features/products/api/use-create-product"
 
 import { createProductFormSchema } from "@/schema/products"
 import { usePathname } from "next/navigation"
+import { useForm } from "react-hook-form"
 
 type Props = {
-    dashboardId: string
+    dashboardId: string;
+    autoUpdateStatus: boolean | undefined;
 }
 
 export function AddProductDialog({
-    dashboardId
+    dashboardId,
+    autoUpdateStatus
 }: Props) {
     const [open, setOpen] = useState(false)
     const pathname = usePathname();
@@ -37,12 +40,9 @@ export function AddProductDialog({
     }, [pathname]);
 
     const CreateMutation = useCreateProduct(dashboardId)
-    const autoUpdateQuery = useGetAutoUpdateStatus(dashboardId)
     const categoriesQuery = useGetCategories(dashboardId)
     const CategoryMutation = useCreateCategorie(dashboardId)
 
-    const autoUpdateStatus = autoUpdateQuery.data?.autoUpdateStatus
-    
     const CategoryOptions = (categoriesQuery.data ?? []).map((category) => ({
         label: category.name,
         value: category.id
@@ -52,14 +52,29 @@ export function AddProductDialog({
     });
 
     const isPending = CategoryMutation.isPending || CreateMutation.isPending;
-    const isLoading = categoriesQuery.isLoading || autoUpdateQuery.isLoading;
+    const isLoading = categoriesQuery.isLoading;
 
     type ProductFormValues = z.infer<typeof createProductFormSchema>
+
+    const form = useForm<ProductFormValues>({
+        resolver: zodResolver(createProductFormSchema),
+        defaultValues: {
+            name: "",
+            status: "OUT_OF_STOCK",
+            categoryId: null,
+            sellingPrice: 0,
+            priceMethode: "MANUAL",
+            stockMethode: "MANUAL",
+            minInventory: 0,
+            measureUnit: "NONE",
+        },
+    })
 
     const onSubmit = (values: ProductFormValues) => {
         CreateMutation.mutate(values, {
             onSuccess: () => {
                 setOpen(false);
+                form.reset()
             }
         })
     }
@@ -79,21 +94,16 @@ export function AddProductDialog({
                         Fill in the details for the new product. Use the tabs to navigate between sections.
                     </DialogDescription>
                 </DialogHeader>
-                {isLoading ? (
-                    <div className="h-[400px] w-full inset-0 flex items-center justify-center">
-                        <Loader className="size-4 text-muted-foreground animate-spin" />
-                    </div>
-                ) : (
-                    <DialogFormProduct
-                        autoUpdate={autoUpdateStatus}
-                        dashboardId={dashboardId}
-                        onSubmit={onSubmit}
-                        disabled={isPending}
-                        categoryOptions={CategoryOptions}
-                        onCreateCategory={onCreateCategory}
-                        onClose={() => setOpen(false)}
-                    />
-                )}
+                <DialogFormProduct
+                    autoUpdate={autoUpdateStatus}
+                    dashboardId={dashboardId}
+                    onSubmit={onSubmit}
+                    disabled={isPending}
+                    categoryOptions={CategoryOptions}
+                    onCreateCategory={onCreateCategory}
+                    onClose={() => setOpen(false)}
+                    isLoading={isLoading}
+                />
             </DialogContent>
         </Dialog>
     )
