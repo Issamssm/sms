@@ -37,6 +37,7 @@ export const useCreateProduct = (dashboardId: string) => {
         onSuccess: () => {
             toast.success("Product created");
             queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
+            queryClient.invalidateQueries({ queryKey: ["categories", dashboardId] });
         },
         onError: (error: AxiosError) => {
             const errorMessage = (error.response?.data as { message: string })?.message;

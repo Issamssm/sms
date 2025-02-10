@@ -39,7 +39,8 @@ export const useCreateCategorie = (dashboardId: string) => {
                 toast.error(errorMessage);
             } else {
                 toast.error("Failed to create category");
-            }        },
+            }        
+        },
     });
 
     return mutation;

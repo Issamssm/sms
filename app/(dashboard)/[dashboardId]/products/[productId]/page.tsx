@@ -5,10 +5,12 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useDashboardId } from "@/hooks/use-dashboard-id";
 import { useProductId } from "@/hooks/use-product-id";
 import { Trash } from "lucide-react"
+import { useRouter } from "next/navigation";
 
 const ProductPage = () => {
     const dashboardId = useDashboardId()
     const productId = useProductId()
+    const router = useRouter();
     const [ConfirmDialog, confirm] = useConfirm(
         "Delete Product",
         "Are you sure you want to delete this product?"
@@ -19,7 +21,11 @@ const ProductPage = () => {
     const handleDelete = async () => {
         const ok = await confirm();
         if (ok) {
-            deleteMutation.mutate()
+            deleteMutation.mutate(undefined, {
+                onSuccess: () => {
+                    router.replace(`/${dashboardId}/products`);
+                }
+            });        
         }
     };
 

@@ -6,22 +6,21 @@ type ResponseType = {
     id: string;
 };
 
-export const useDeleteProduct = (id: string, dashboardId: string) => {
+export const useDeleteCategory = (id: string, dashboardId: string) => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation<ResponseType, Error>({
         mutationFn: async () => {
             return toast.promise(
-                axios.delete(`/api/product?dashboardId=${dashboardId}&id=${id}`),
+                axios.delete(`/api/category?dashboardId=${dashboardId}&id=${id}`),
                 {
-                    loading: "Deleting product...",
-                    success: "Product deleted",
-                    error: "Failed to delete product",
+                    loading: "Deleting category...",
+                    success: "category deleted",
+                    error: "Failed to delete category",
                 }
             );
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["product", { id, dashboardId }] });
             queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["categories", dashboardId] });
         },

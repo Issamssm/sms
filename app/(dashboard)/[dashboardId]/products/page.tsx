@@ -32,9 +32,7 @@ const ProductsPage = () => {
     return (
       <div className="mx-auto w-full px-4 md:px-6 py-4">
         <div className="flex items-center justify-between mb-12 gap-3">
-          <h1 className="text-xl line-clamp-1 font-semibold tracking-tight md:p-0">
-            <Skeleton className="h-8 w-48" />
-          </h1>
+          <Skeleton className="h-8 w-48" />
           <Skeleton className="h-8 w-48" />
         </div>
         <div className="h-[400px] w-full flex items-center justify-center py-4">

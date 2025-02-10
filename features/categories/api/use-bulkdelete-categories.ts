@@ -7,7 +7,7 @@ type RequestType = {
 }
 
 
-export const useBulkDeleteProducts = (dashboardId: string) => {
+export const useBulkDeleteCategories = (dashboardId: string) => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation<
@@ -16,13 +16,13 @@ export const useBulkDeleteProducts = (dashboardId: string) => {
         RequestType
     >({
         mutationFn: async (json) => {
-            const response = await axios.delete(`/api/product/bulkdelete?dashboardId=${dashboardId}`, {
+            const response = await axios.delete(`/api/category/bulkdelete?dashboardId=${dashboardId}`, {
                 data: json
             });
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["products", dashboardId] })
+            queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["categories", dashboardId] });
         }
     });
