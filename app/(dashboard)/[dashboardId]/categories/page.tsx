@@ -5,7 +5,8 @@ import { columns } from './columns'
 import { DataTable } from '@/components/data-table'
 import { Skeleton } from '@/components/ui/skeleton'
 
-// import { AddProductDialog } from '@/features/products/components/add-product-dialog'
+import { AddCategoryDialog } from '@/features/categories/components/add-category-dialog'
+
 import { useBulkDeleteCategories } from '@/features/categories/api/use-bulkdelete-categories'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 
@@ -50,11 +51,9 @@ const ProductsPage = () => {
                         Manage all categories and their associated products with ease.
                     </div>
                 </div>
-                {/* <AddProductDialog
+                <AddCategoryDialog
                     dashboardId={dashboardId}
-                    autoUpdateStatus={autoUpdateStatus}
-                /> */}
-                test
+                />
             </div>
             <DataTable
                 columns={columns}

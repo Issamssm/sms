@@ -1,14 +1,8 @@
 "use client"
 
-import { Eye, MoreHorizontal, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
 
 import { useDeleteCategory } from "@/features/categories/api/use-delete-category";
 
@@ -38,29 +32,13 @@ export const Actions = ({ id, dashboardId }: Props) => {
     return (
         <>
             <ConfirmDialog />
-            <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild>
-                    <Button variant={"ghost"} className="size-8 p-0">
-                        <MoreHorizontal className="size-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                        disabled={deleteMutation.isPending}
-                        onClick={() => {}}
-                    >
-                        <Eye className="size-4 mr-2" />
-                        View products
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        disabled={deleteMutation.isPending}
-                        onClick={handleDelete}
-                    >
-                        <Trash className="size-4 mr-2" />
-                        Delete
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant={"ghost"}
+                className="size-4 p-0"
+                onClick={handleDelete}
+                disabled={deleteMutation.isPending}
+            >
+                <Trash className="size-4 mr-2" />
+            </Button>
         </>
     )
 }
