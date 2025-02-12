@@ -6,7 +6,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 import { $Enums } from "@prisma/client"
-import { Decimal } from "@prisma/client/runtime/library"
 
 import { ProductStatusesWithLabel } from "@/constants"
 
@@ -18,11 +17,11 @@ type ResponseType = {
     dashboardId: string;
     name: string;
     status: $Enums.ProductStatus;
-    sellingPrice: Decimal | null;
+    sellingPrice: number | null;
     category: {
         name: string;
     } | null;
-    currentStock: Decimal | null;
+    currentStock: number | null;
 };
 
 export const columns: ColumnDef<ResponseType>[] = [

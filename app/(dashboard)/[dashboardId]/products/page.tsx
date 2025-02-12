@@ -14,6 +14,7 @@ import { useDashboardId } from '@/hooks/use-dashboard-id'
 
 import { Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { CategoryFilter } from '@/components/category-filter'
 
 
 const ProductsPage = () => {
@@ -54,10 +55,13 @@ const ProductsPage = () => {
             You can create and delete products, and navigate to the product page to edit it.
           </div>
         </div>
-        <AddProductDialog
-          dashboardId={dashboardId}
-          autoUpdateStatus={autoUpdateStatus}
-        />
+        <div className='flex items-center gap-2 flex-wrap w-full md:w-fit'>
+          <AddProductDialog
+            dashboardId={dashboardId}
+            autoUpdateStatus={autoUpdateStatus}
+          />
+          <CategoryFilter />
+        </div>
       </div>
       <DataTable
         columns={columns}

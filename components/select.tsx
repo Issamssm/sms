@@ -5,7 +5,7 @@ import { SingleValue } from "react-select"
 import CreateableSelect from "react-select/creatable"
 
 type Props = {
-    onChange: (value?: string) => void;
+    onChange: (value?: string | null) => void;
     onCreate?: (value: string, dashboardId: string) => void;
     options?: { label: string, value: string }[];
     value?: string | null | undefined;
@@ -25,14 +25,15 @@ export const Select = ({
 }: Props) => {
 
     const onSelect = (
-        option: SingleValue<{ label: string, value: string }>
+        option: SingleValue<{ label: string, value: string }> | null
     ) => {
-        onChange(option?.value)
+        onChange(option ? option.value : null);
     };
 
     const formatedValue = useMemo(() => {
-        return options.find((option) => option.value === value);
+        return options.find((option) => option.value === value) || null; // رجّع null بدل undefined
     }, [options, value]);
+
 
     const handleCreate = (inputValue: string) => {
         if (onCreate) {
@@ -58,6 +59,7 @@ export const Select = ({
             options={options}
             onCreateOption={handleCreate}
             isDisabled={disabled}
+            isClearable
         />
     );
 };

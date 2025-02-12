@@ -62,7 +62,6 @@ model Product {
   id                String          @id @default(uuid())
   name              String
   description       String?
-  imageUrl          String?
   status            ProductStatus   @default(OUT_OF_STOCK)
   sellingPrice      Decimal?        @default(0)
   dashboardId       String
