@@ -10,7 +10,6 @@ export async function GET(
 
         const url = new URL(req.url);
         const dashboardId = url.searchParams.get("dashboardId");
-        const categoryId = url.searchParams.get("categoryId"); 
 
         if (!userId) {
             return new NextResponse("Unauthorized", { status: 403 });
@@ -20,14 +19,11 @@ export async function GET(
             return new NextResponse("Dashboard ID is required", { status: 400 });
         }
 
-        const whereCondition: { dashboardId: string; categoryId?: string } = { dashboardId };
-
-        if (categoryId) {
-            whereCondition.categoryId = categoryId;
-        }
 
         const products = await db.product.findMany({
-            where: whereCondition,
+            where: {
+                dashboardId
+            },
             select: {
                 id: true,
                 dashboardId: true,
@@ -46,7 +42,8 @@ export async function GET(
         const formattedProducts = products.map(product => ({
             ...product,
             sellingPrice: product.sellingPrice ? Number(product.sellingPrice) : 0,
-            currentStock: product.currentStock ? Number(product.currentStock) : 0
+            currentStock: product.currentStock ? Number(product.currentStock) : 0,
+            category: product.category ? product.category.name : null,
         }));
 
         return NextResponse.json(formattedProducts);

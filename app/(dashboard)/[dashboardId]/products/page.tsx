@@ -9,12 +9,12 @@ import { AddProductDialog } from '@/features/products/components/add-product-dia
 import { useGetProducts } from '@/features/products/api/use-get-products'
 import { useBulkDeleteProducts } from '@/features/products/api/use-bulkdelete-product'
 import { useGetAutoUpdateStatus } from '@/features/dashboard/api/use-get-autoUpdateStatus'
+import { useGetCategories } from '@/features/categories/api/use-get-categories'
 
 import { useDashboardId } from '@/hooks/use-dashboard-id'
 
 import { Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { CategoryFilter } from '@/components/category-filter'
 
 
 const ProductsPage = () => {
@@ -23,11 +23,15 @@ const ProductsPage = () => {
   const productsQuery = useGetProducts(dashboardId)
   const deleteProducts = useBulkDeleteProducts(dashboardId)
   const autoUpdateQuery = useGetAutoUpdateStatus(dashboardId)
+  const categoriesQuery = useGetCategories(dashboardId);
 
   const products = productsQuery.data || []
   const autoUpdateStatus = autoUpdateQuery.data?.autoUpdateStatus
   const isDisabled = productsQuery.isLoading || deleteProducts.isPending;
 
+  const options = (categoriesQuery.data ?? []).map((category) => ({
+    label: category.name
+  }))
 
   if (productsQuery.isLoading || autoUpdateQuery.isLoading) {
     return (
@@ -60,7 +64,6 @@ const ProductsPage = () => {
             dashboardId={dashboardId}
             autoUpdateStatus={autoUpdateStatus}
           />
-          <CategoryFilter />
         </div>
       </div>
       <DataTable
@@ -79,6 +82,11 @@ const ProductsPage = () => {
           );
         }}
         disabled={isDisabled}
+      facetedFilter={{
+        options: options,
+        facetedFilterKey: 'category',
+        facetedFilterTitle: 'Category',
+      }}
       />
     </div>
   )

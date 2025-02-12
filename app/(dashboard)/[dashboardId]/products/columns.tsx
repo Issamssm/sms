@@ -18,9 +18,7 @@ type ResponseType = {
     name: string;
     status: $Enums.ProductStatus;
     sellingPrice: number | null;
-    category: {
-        name: string;
-    } | null;
+    category: string | null;
     currentStock: number | null;
 };
 
@@ -63,6 +61,9 @@ export const columns: ColumnDef<ResponseType>[] = [
     },
     {
         accessorKey: "category",
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
         header: ({ column }) => {
             return (
                 <Button
@@ -78,7 +79,7 @@ export const columns: ColumnDef<ResponseType>[] = [
 
             return (
                 <CategoryColumn
-                    category={row.original.category?.name}
+                    category={row.original.category}
                 />
             )
         }

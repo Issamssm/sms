@@ -26,6 +26,7 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Trash } from "lucide-react"
 import { useConfirm } from "@/hooks/use-confirm"
+import { DataTableFilter } from "./data-table-filter"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -33,6 +34,11 @@ interface DataTableProps<TData, TValue> {
     filterKey: string
     onDelete: (rows: Row<TData>[]) => void
     disabled?: boolean
+    facetedFilter?: {
+        facetedFilterKey: string
+        options: { label: string }[]
+        facetedFilterTitle: string
+    }
 }
 
 export function DataTable<TData, TValue>({
@@ -40,7 +46,8 @@ export function DataTable<TData, TValue>({
     data,
     filterKey,
     onDelete,
-    disabled
+    disabled,
+    facetedFilter
 }: DataTableProps<TData, TValue>) {
     const [ConfirmDialog, confirm] = useConfirm(
         "Are you sure?",
@@ -69,15 +76,40 @@ export function DataTable<TData, TValue>({
             columnFilters,
             rowSelection,
         },
-        // initialState: {
-        //     pagination: { pageSize: 7 }
-        // }
     })
 
     return (
         <div>
             <ConfirmDialog />
-            <div className="flex items-center py-4 gap-1">
+            <div className="flex flex-wrap py-3 gap-3">
+                <div className="flex items-center justify-between gap-3 w-full">
+                    {table.getColumn(`${facetedFilter?.facetedFilterKey}`) && (
+                        <DataTableFilter
+                            column={table.getColumn(`${facetedFilter?.facetedFilterKey}`)}
+                            title={`${facetedFilter?.facetedFilterTitle}`}
+                            options={facetedFilter?.options}
+                        />
+                    )}
+                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                        <Button
+                            size={"sm"}
+                            disabled={disabled}
+                            variant={"outline"}
+                            className="ml-auto font-normal text-xs h-10"
+                            onClick={async () => {
+                                const ok = await confirm()
+
+                                if (ok) {
+                                    onDelete(table.getFilteredSelectedRowModel().rows)
+                                    table.resetRowSelection();
+                                }
+                            }}
+                        >
+                            <Trash className="size-4 mr-2" />
+                            Delete ({table.getFilteredSelectedRowModel().rows.length})
+                        </Button>
+                    )}
+                </div>
                 <Input
                     placeholder={`Filter ${filterKey}...`}
                     value={(table.getColumn(`${filterKey}`)?.getFilterValue() as string) ?? ""}
@@ -86,25 +118,6 @@ export function DataTable<TData, TValue>({
                     }
                     className="max-w-sm md:h-8"
                 />
-                {table.getFilteredSelectedRowModel().rows.length > 0 && (
-                    <Button
-                        size={"sm"}
-                        disabled={disabled}
-                        variant={"outline"}
-                        className="ml-auto font-normal text-xs h-10"
-                        onClick={async () => {
-                            const ok = await confirm()
-
-                            if (ok) {
-                                onDelete(table.getFilteredSelectedRowModel().rows)
-                                table.resetRowSelection();
-                            }
-                        }}
-                    >
-                        <Trash className="size-4 mr-2" />
-                        Delete ({table.getFilteredSelectedRowModel().rows.length})
-                    </Button>
-                )}
             </div>
             <div className="rounded-md border bg-white">
                 <Table>

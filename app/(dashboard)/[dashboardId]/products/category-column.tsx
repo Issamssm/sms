@@ -3,7 +3,7 @@ import { TriangleAlert } from "lucide-react";
 
 
 type Props = {
-    category: string | undefined;
+    category: string | null;
 }
 
 export const CategoryColumn = ({
