@@ -39,7 +39,7 @@ export function DataTableFilter<TData, TValue>({
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-10 border-dashed">
+                <Button variant="outline" size="sm" className="h-10">
                     <Filter />
                     {title}
                     {selectedValues?.size > 0 && (
@@ -76,7 +76,7 @@ export function DataTableFilter<TData, TValue>({
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0" align="start">
+            <PopoverContent className="w-[150px] p-0" align="start">
                 <Command>
                     <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>

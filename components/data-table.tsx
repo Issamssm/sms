@@ -82,14 +82,22 @@ export function DataTable<TData, TValue>({
         <div>
             <ConfirmDialog />
             <div className="flex flex-wrap py-3 gap-3">
-                <div className="flex items-center justify-between gap-3 w-full">
-                    {table.getColumn(`${facetedFilter?.facetedFilterKey}`) && (
-                        <DataTableFilter
-                            column={table.getColumn(`${facetedFilter?.facetedFilterKey}`)}
-                            title={`${facetedFilter?.facetedFilterTitle}`}
-                            options={facetedFilter?.options}
-                        />
-                    )}
+                {facetedFilter && (
+                    <DataTableFilter
+                        column={table.getColumn(`${facetedFilter?.facetedFilterKey}`)}
+                        title={`${facetedFilter?.facetedFilterTitle}`}
+                        options={facetedFilter?.options}
+                    />
+                )}
+                <div className="flex items-center justify-between gap-2 w-full">
+                    <Input
+                        placeholder={`Filter ${filterKey}...`}
+                        value={(table.getColumn(`${filterKey}`)?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn(`${filterKey}`)?.setFilterValue(event.target.value)
+                        }
+                        className="max-w-sm"
+                    />
                     {table.getFilteredSelectedRowModel().rows.length > 0 && (
                         <Button
                             size={"sm"}
@@ -105,19 +113,11 @@ export function DataTable<TData, TValue>({
                                 }
                             }}
                         >
-                            <Trash className="size-4 mr-2" />
+                            <Trash className="size-4" />
                             Delete ({table.getFilteredSelectedRowModel().rows.length})
                         </Button>
                     )}
                 </div>
-                <Input
-                    placeholder={`Filter ${filterKey}...`}
-                    value={(table.getColumn(`${filterKey}`)?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn(`${filterKey}`)?.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm md:h-8"
-                />
             </div>
             <div className="rounded-md border bg-white">
                 <Table>
