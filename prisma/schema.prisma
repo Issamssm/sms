@@ -10,13 +10,21 @@ datasource db {
 model Dashboard {
   id                String          @id @default(uuid())
   userId            String
+  autoUpdateStatus  Boolean         @default(true)
+
   products          Product[] 
   categories        Category[]
-  autoUpdateStatus  Boolean         @default(true)
-  // inventories       Inventory[]
+  supplier          Supplier[]
+  customer          Customer[]
+  inventoriesIncome  InventoryIncome[]
+  inventoriesOutcome InventoryOutcome[]
+
 
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+
+  @@index([id])
+
 }
 
 enum ProductStatus {
@@ -60,7 +68,7 @@ enum MeasurementUnit {
 
 model Product {
   id                String          @id @default(uuid())
-  name              String
+  name              String          @unique
   description       String?
   status            ProductStatus   @default(OUT_OF_STOCK)
   sellingPrice      Decimal?        @default(0)
@@ -75,12 +83,13 @@ model Product {
   warehouseLocation String?
   measureUnit       MeasurementUnit @default(NONE)
 
-  // inventories       Inventory[]
-  // supplier          Supplier[]
-  // customer          Customer[]
+  inventoriesIncome  InventoryIncome[]
+  inventoriesOutcome InventoryOutcome[]
 
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+
+  @@index([dashboardId, id])
 }
 
 model Category {
@@ -89,6 +98,74 @@ model Category {
   dashboardId       String
   dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
   products          Product[] 
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([dashboardId, id])
+}
+
+
+model InventoryIncome {
+  id                String          @id @default(uuid())
+  productId         String
+  product           Product         @relation(fields: [productId], references: [id])
+  dashboardId       String
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+
+  quantity          Int             @default(0)
+  costPrice         Decimal         @default(0)
+  supplierId        String?
+  supplier          Supplier?       @relation(fields: [supplierId], references: [id])
+  purchaseDate      DateTime        @default(now())
+  invoiceNumber     String?         @unique
+  addedDate         DateTime        @default(now()) 
+  expiryDate        DateTime?
+  location          String   
+
+  @@index([dashboardId, id])
+}
+
+
+model InventoryOutcome {
+  id                String          @id @default(uuid())
+  productId         String
+  product           Product         @relation(fields: [productId], references: [id])
+  dashboardId       String
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+
+  quantity          Int             @default(0)
+  sellingPrice      Decimal         @default(0)
+  customerId        String?
+  customer          Customer?       @relation(fields: [customerId], references: [id])
+  invoiceNumber     String?         @unique
+  shippedAt         DateTime        @default(now())  
+  location          String    
+
+  @@index([dashboardId, id])
+}
+
+model Supplier {
+  id                String          @id @default(uuid())
+  name              String
+  address           String?
+  contactInfo       String
+  dashboardId       String
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  inventoryIncome   InventoryIncome[]
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model Customer {
+  id                String          @id @default(uuid())
+  name              String
+  contactInfo       String
+  address           String?
+  dashboardId       String
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  inventoryOutcome  InventoryOutcome[]
 
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt

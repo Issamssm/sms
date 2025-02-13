@@ -82,11 +82,13 @@ const ProductsPage = () => {
           );
         }}
         disabled={isDisabled}
-      facetedFilter={{
-        options: options,
-        facetedFilterKey: 'category',
-        facetedFilterTitle: 'Category',
-      }}
+        facetedFilters={[
+          {
+            options: options,
+            facetedFilterKey: 'category',
+            facetedFilterTitle: 'Category',
+          }
+        ]}
       />
     </div>
   )

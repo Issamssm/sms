@@ -34,11 +34,11 @@ interface DataTableProps<TData, TValue> {
     filterKey: string
     onDelete: (rows: Row<TData>[]) => void
     disabled?: boolean
-    facetedFilter?: {
+    facetedFilters?: {
         facetedFilterKey: string
         options: { label: string }[]
         facetedFilterTitle: string
-    }
+    }[]
 }
 
 export function DataTable<TData, TValue>({
@@ -47,7 +47,7 @@ export function DataTable<TData, TValue>({
     filterKey,
     onDelete,
     disabled,
-    facetedFilter
+    facetedFilters
 }: DataTableProps<TData, TValue>) {
     const [ConfirmDialog, confirm] = useConfirm(
         "Are you sure?",
@@ -82,13 +82,14 @@ export function DataTable<TData, TValue>({
         <div>
             <ConfirmDialog />
             <div className="flex flex-wrap py-3 gap-3">
-                {facetedFilter && (
+                {facetedFilters && facetedFilters.map((filter, index) => (
                     <DataTableFilter
-                        column={table.getColumn(`${facetedFilter?.facetedFilterKey}`)}
-                        title={`${facetedFilter?.facetedFilterTitle}`}
-                        options={facetedFilter?.options}
+                        key={index}
+                        column={table.getColumn(filter.facetedFilterKey)}
+                        title={filter.facetedFilterTitle}
+                        options={filter.options}
                     />
-                )}
+                ))}
                 <div className="flex items-center justify-between gap-2 w-full">
                     <Input
                         placeholder={`Filter ${filterKey}...`}
@@ -126,7 +127,7 @@ export function DataTable<TData, TValue>({
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead key={header.id} className="[&>button]:text-xs">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -147,7 +148,7 @@ export function DataTable<TData, TValue>({
                                     data-state={row.getIsSelected() && "selected"}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} className="text-xs">
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}

@@ -4,25 +4,23 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
-import { $Enums } from "@prisma/client"
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 
-import { ProductStatusesWithLabel } from "@/constants"
+import { format } from "date-fns"
 
 import { Actions } from "./actions"
-import { CategoryColumn } from "./category-column"
 
-type ResponseType = {
+type InventoryItem = {
     id: string;
-    dashboardId: string;
-    name: string;
-    status: $Enums.ProductStatus;
-    sellingPrice: number | null;
-    category: string | null;
-    currentStock: number | null;
-};
+    quantity: number;
+    price: number;
+    date: Date;
+    product: string;
+    type: string;
+    dashboardId: string
+}
 
-export const columns: ColumnDef<ResponseType>[] = [
+export const columns: ColumnDef<InventoryItem>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -46,60 +44,24 @@ export const columns: ColumnDef<ResponseType>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "name",
+        accessorKey: "product",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Name
+                    Product
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         }
     },
     {
-        accessorKey: "category",
+        accessorKey: "quantity",
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
         },
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Category
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-
-            return (
-                <CategoryColumn
-                    category={row.original.category}
-                />
-            )
-        }
-    },
-    {
-        accessorKey: "sellingPrice",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Selling Price
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-        accessorKey: "currentStock",
         header: ({ column }) => {
             return (
                 <Button
@@ -113,31 +75,77 @@ export const columns: ColumnDef<ResponseType>[] = [
         }
     },
     {
-        accessorKey: "status",
+        accessorKey: "price",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    status
+                    Price
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
         cell: ({ row }) => {
-            const status = ProductStatusesWithLabel.find(s => s.value === row.original.status);
-
-            return (
-                <div className="flex gap-2 items-center">
-                    <div className={`size-3 rounded-full ${status?.color || "bg-gray-500"}`} />
-                    {status?.label || "Unknown"}
-                </div>
+            const data = row.original;
+            return data.type === "income" ? (
+                <span className="text-blue-600 flex items-center gap-1">
+                    <ArrowDown className="size-4 text-green-500" />
+                    {data.price} DH <span className="text-xs text-gray-500">(Cost)</span>
+                </span>
+            ) : (
+                <span className="text-orange-600 flex items-center flex-wrap gap-1">
+                    <ArrowUp className="size-4 text-red-500" />
+                    {data.price} DH <span className="text-xs text-gray-500">(Selling)</span>
+                </span>
             );
         }
     },
     {
+        accessorKey: "date",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Date
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: ({ row }) => {
+
+            const date = row.getValue("date") as Date;
+
+            return (
+                <span>
+                    {format(date, "dd MMM, yyyy")}
+                </span>
+            )
+        }
+    },
+    {
+        accessorKey: "type",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Type
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        }, cell: ({ getValue }) => {
+            return getValue() === "income"
+                ? <span className="text-green-600">Income</span>
+                : <span className="text-red-600">Outcome</span>;
+        }
+    },
+    {
         id: "actions",
-        cell: ({ row }) => <Actions id={row.original.id} dashboardId={row.original.dashboardId} />
+        cell: ({ row }) => <Actions id={row.original.id} dashboardId={row.original.dashboardId} type={row.original.type} />
     }
 ]
