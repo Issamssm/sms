@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus } from "lucide-react"
+import { PlusCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -83,11 +83,11 @@ export function AddProductDialog({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button size={"sm"} className="text-sm md:w-auto w-full">
-                    <Plus className="size-4 mr-2" />
+                    <PlusCircle className="size-4 mr-2" />
                     Add Product
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[625px]">
+            <DialogContent className="sm:max-w-[425px] md:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle>Add New Product</DialogTitle>
                     <DialogDescription>

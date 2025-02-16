@@ -4,6 +4,7 @@ import { columns } from './columns'
 
 import { DataTable } from '@/components/data-table'
 import { Skeleton } from '@/components/ui/skeleton'
+import { InventoryDialog } from '@/features/inventories/components/add-inventory-dialog'
 
 import { useGetInventories } from '@/features/inventories/api/use-get-inventories'
 import { useBulkDeleteInventories } from '@/features/inventories/api/use-bulkdelete-inventory'
@@ -17,12 +18,11 @@ import toast from 'react-hot-toast'
 const InventoriesPage = () => {
 
     const dashboardId = useDashboardId()
-    const inventoriesQuery = useGetInventories(dashboardId)
+    const { data: inventories = [], isLoading: inventoriesLoading, isError } = useGetInventories(dashboardId)
     
     const deleteInventories = useBulkDeleteInventories(dashboardId)
     
-    const inventories = inventoriesQuery.data || []
-    const isDisabled = inventoriesQuery.isLoading || deleteInventories.isPending;
+    const isDisabled = inventoriesLoading || deleteInventories.isPending;
 
     const typeOptions = [
         {
@@ -33,7 +33,7 @@ const InventoriesPage = () => {
         }
     ]
 
-    if (inventoriesQuery.isLoading) {
+    if (inventoriesLoading) {
         return (
             <div className="mx-auto w-full px-4 md:px-6 py-4">
                 <div className="flex items-center justify-between mb-12 gap-3">
@@ -47,9 +47,17 @@ const InventoriesPage = () => {
         )
     }
 
+    if (isError) {
+        return (
+            <div className="mx-auto w-full px-4 md:px-6 py-4 text-center text-red-500">
+                Failed to load inventories. Please try again.
+            </div>
+        )
+    }
+
     return (
         <div className="mx-auto w-full px-4 md:px-6 py-4">
-            <div className="flex items-center justify-between mb-8 flex-col md:flex-row">
+            <div className="flex items-center justify-between mb-8 flex-col md:flex-row gap-4">
                 <div className='flex flex-col gap-2'>
                     <h1 className="text-xl line-clamp-1 font-semibold tracking-tight md:p-0">
                         Inventories Page
@@ -60,12 +68,19 @@ const InventoriesPage = () => {
                         to the detailed view of each inventory item for further editing.
                     </div>
                 </div>
-                <div className='flex items-center gap-2 flex-wrap w-full md:w-fit'>
-                    {/* <AddProductDialog
-                        dashboardId={dashboardId}
-                        autoUpdateStatus={autoUpdateStatus}
-                    /> */}
-                    add
+                <div className='flex items-center gap-2 w-full md:w-fit'>
+                    <InventoryDialog 
+                        title="Add New Stock Entry"
+                        label='Stock Income'
+                        description='Enter the details for the new inventory income.'
+                        type="income"
+                    />
+                    <InventoryDialog 
+                        title='Register Stock Usage'
+                        label='Stock Outcome'
+                        description='Enter the details for the new inventory outcome.'
+                        type="outcome"
+                    />
                 </div>
             </div>
             <DataTable

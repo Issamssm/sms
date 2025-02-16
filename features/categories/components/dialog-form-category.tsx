@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { createCategoryFormSchema } from "@/schema/categories"
+import { Loader } from "lucide-react"
 
 
 type CategoryFormValues = z.infer<typeof createCategoryFormSchema>
@@ -55,12 +56,15 @@ export const DialogFormCategory = ({
                         </FormItem>
                     )}
                 />
-                <Button type="submit" disabled={disabled}>
-                    Save Category
-                </Button>
-                <Button type="button" variant={"outline"} onClick={onClose} className="ml-4">
-                    Cancel
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button type="submit" disabled={disabled}>
+                        {disabled && <Loader className="animate-spin" />}
+                        create category
+                    </Button>
+                    <Button type="button" disabled={disabled} variant={"outline"} onClick={onClose}>
+                        Cancel
+                    </Button>
+                </div>
             </form>
         </Form>
     )

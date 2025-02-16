@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus } from "lucide-react"
+import { PlusCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -61,7 +61,7 @@ export function AddCategoryDialog({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button size={"sm"} className="text-sm md:w-auto w-full">
-                    <Plus className="size-4 mr-2" />
+                    <PlusCircle className="size-4 mr-2" />
                     Add Category
                 </Button>
             </DialogTrigger>

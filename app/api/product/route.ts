@@ -35,7 +35,8 @@ export async function GET(
                         name: true
                     }
                 },
-                currentStock: true
+                currentStock: true,
+                stockMethode: true,
             }
         });
 

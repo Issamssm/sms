@@ -73,7 +73,7 @@ model Product {
   status            ProductStatus   @default(OUT_OF_STOCK)
   sellingPrice      Decimal?        @default(0)
   dashboardId       String
-  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
   categoryId        String?
   category          Category?       @relation(fields: [categoryId], references: [id])
   stockMethode      ProductStocks   @default(MANUAL)
@@ -96,7 +96,7 @@ model Category {
   id                String          @id @default(uuid())
   name              String
   dashboardId       String
-  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
   products          Product[] 
 
   createdAt         DateTime        @default(now())
@@ -109,30 +109,33 @@ model Category {
 model InventoryIncome {
   id                String          @id @default(uuid())
   productId         String
-  product           Product         @relation(fields: [productId], references: [id])
+  product           Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
   dashboardId       String
-  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
 
   quantity          Int             @default(0)
   costPrice         Decimal         @default(0)
   supplierId        String?
   supplier          Supplier?       @relation(fields: [supplierId], references: [id])
   purchaseDate      DateTime        @default(now())
-  invoiceNumber     String?         @unique
+  invoiceNumber     String?
   addedDate         DateTime        @default(now()) 
   expiryDate        DateTime?
-  location          String   
+  location          String?
+  notes             String? 
 
-  @@index([dashboardId, id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([dashboardId, productId, id])
 }
-
 
 model InventoryOutcome {
   id                String          @id @default(uuid())
   productId         String
-  product           Product         @relation(fields: [productId], references: [id])
+  product           Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
   dashboardId       String
-  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
 
   quantity          Int             @default(0)
   sellingPrice      Decimal         @default(0)
@@ -141,9 +144,14 @@ model InventoryOutcome {
   invoiceNumber     String?         @unique
   shippedAt         DateTime        @default(now())  
   location          String    
+  notes             String? 
 
-  @@index([dashboardId, id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([dashboardId, productId, id])
 }
+
 
 model Supplier {
   id                String          @id @default(uuid())
@@ -151,7 +159,7 @@ model Supplier {
   address           String?
   contactInfo       String
   dashboardId       String
-  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
   inventoryIncome   InventoryIncome[]
 
   createdAt         DateTime        @default(now())
@@ -164,7 +172,7 @@ model Customer {
   contactInfo       String
   address           String?
   dashboardId       String
-  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id])
+  dashboard         Dashboard       @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
   inventoryOutcome  InventoryOutcome[]
 
   createdAt         DateTime        @default(now())

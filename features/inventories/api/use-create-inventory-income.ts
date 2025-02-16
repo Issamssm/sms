@@ -1,14 +1,14 @@
-import { editProductFormSchema } from "@/schema/products";
+import { createInventoryIncomeFormSchema } from "@/schema/inventory";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import toast from 'react-hot-toast';
 import { z } from "zod";
 
 
-type RequestType = z.infer<typeof editProductFormSchema>
+type RequestType = z.infer<typeof createInventoryIncomeFormSchema>
 
 
-export const useEditProduct = (dashboardId: string, id: string) => {
+export const useCreateInventoryIncome = (dashboardId: string) => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation<
@@ -17,15 +17,13 @@ export const useEditProduct = (dashboardId: string, id: string) => {
         RequestType
     >({
         mutationFn: async (json) => {
-            const response = await axios.patch(`/api/product?dashboardId=${dashboardId}&id=${id}`, json);
+            const response = await axios.post(`/api/inventory/income?dashboardId=${dashboardId}`, json);
             return response.data;
         },
         onSuccess: () => {
-            toast.success("Product edited");
-            queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
-            queryClient.invalidateQueries({ queryKey: ["product", dashboardId, id] });
-            queryClient.invalidateQueries({ queryKey: ["categories", dashboardId] });
+            toast.success("Inventory created");
             queryClient.invalidateQueries({ queryKey: ["inventories", dashboardId] });
+            queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
         },
         onError: (error: AxiosError) => {
             const errorMessage = (error.response?.data as { message: string })?.message;
@@ -33,7 +31,7 @@ export const useEditProduct = (dashboardId: string, id: string) => {
             if (errorMessage) {
                 toast.error(errorMessage);
             } else {
-                toast.error("Failed to edited product");
+                toast.error("Failed to create inventory");
             }
         },
     });

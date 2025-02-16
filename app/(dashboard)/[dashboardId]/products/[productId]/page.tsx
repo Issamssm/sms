@@ -1,16 +1,12 @@
 "use client"
 
-import { Button, buttonVariants } from "@/components/ui/button"
 import Link from "next/link"
-import { useDeleteProduct } from "@/features/products/api/use-delete-product"
-import { useConfirm } from "@/hooks/use-confirm"
-import { useDashboardId } from "@/hooks/use-dashboard-id"
-import { useProductId } from "@/hooks/use-product-id"
-import { ChevronLeft, Loader2, Trash } from "lucide-react"
+import { z } from "zod"
+import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
+
 import { EditProductForm } from "@/features/products/components/edit-product-form"
-import { useGetProduct } from "@/features/products/api/use-get-product"
-import { useGetAutoUpdateStatus } from "@/features/dashboard/api/use-get-autoUpdateStatus"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
     Tabs,
     TabsContent,
@@ -18,12 +14,20 @@ import {
     TabsTrigger
 } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
+import { ChevronLeft, Loader2, Trash } from "lucide-react"
+
+import { useGetProduct } from "@/features/products/api/use-get-product"
+import { useGetAutoUpdateStatus } from "@/features/dashboard/api/use-get-autoUpdateStatus"
 import { useGetCategories } from "@/features/categories/api/use-get-categories"
-import { editProductFormSchema } from "@/schema/products"
-import { z } from "zod"
+import { useDeleteProduct } from "@/features/products/api/use-delete-product"
 import { useEditProduct } from "@/features/products/api/use-edit-product"
 import { useCreateCategorie } from "@/features/categories/api/use-create-category"
-import { cn } from "@/lib/utils"
+
+import { useConfirm } from "@/hooks/use-confirm"
+import { useDashboardId } from "@/hooks/use-dashboard-id"
+import { useProductId } from "@/hooks/use-product-id"
+
+import { editProductFormSchema } from "@/schema/products"
 
 const ProductPage = () => {
     const dashboardId = useDashboardId()
@@ -121,17 +125,17 @@ const ProductPage = () => {
             <div className="mx-auto w-full px-4 md:px-6 py-4">
                 <div className="flex items-center justify-between mb-8 flex-col md:flex-row gap-2 md:gap-4">
                     <div className="flex flex-col gap-2">
-                        <Link href={`/${dashboardId}/products`} className={cn(buttonVariants({ variant: "outline" }), "px-6 size-8")}>
-                            <ChevronLeft className="size-3" />
-                        </Link>
-                        <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-4">
+                            <Link href={`/${dashboardId}/products`} className={cn(buttonVariants({ variant: "outline" }), "px-5 size-8")}>
+                                <ChevronLeft className="size-3" />
+                            </Link>
                             <h1 className="text-xl line-clamp-1 font-semibold tracking-tight md:p-0">
                                 Product Details
                             </h1>
-                            <div className="text-sm text-gray-500 mb-4 md:max-w-xl">
-                                On the Product Page, you can view and manage all details related to a specific product. This includes
-                                essential information such as the product name, description, price, stock levels, and status.
-                            </div>
+                        </div>
+                        <div className="text-sm text-gray-500 mb-4 md:max-w-xl">
+                            On the Product Page, you can view and manage all details related to a specific product. This includes
+                            essential information such as the product name, description, price, stock levels, and status.
                         </div>
                     </div>
                     <div className="flex gap-2 md:w-auto w-full">
@@ -159,10 +163,10 @@ const ProductPage = () => {
                             dashboardId={dashboardId}
                         />
                     </TabsContent>
-                    <TabsContent value="pricing" className="space-y-4">
+                    <TabsContent value="inventory" className="space-y-4">
 
                     </TabsContent>
-                    <TabsContent value="inventory" className="space-y-4">
+                    <TabsContent value="pricing" className="space-y-4">
 
                     </TabsContent>
                 </Tabs>

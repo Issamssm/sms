@@ -24,6 +24,7 @@ export const useDeleteProduct = (id: string, dashboardId: string) => {
             queryClient.invalidateQueries({ queryKey: ["product", id, dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["categories", dashboardId] });
+            queryClient.invalidateQueries({ queryKey: ["inventories", dashboardId] });
         },
     });
 

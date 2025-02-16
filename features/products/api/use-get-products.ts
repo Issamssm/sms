@@ -10,6 +10,7 @@ type ResponseType = {
     sellingPrice: number | null;
     category: string | null;
     currentStock: number | null;
+    stockMethode: $Enums.ProductStocks
 }[];
 
 export const useGetProducts = (dashboardId: string) => {

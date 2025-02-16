@@ -34,6 +34,7 @@ import {
     ProductPriceMethods,
 } from "@/constants"
 import { createProductFormSchema } from "@/schema/products"
+import { Loader } from "lucide-react"
 
 
 type ProductFormValues = z.infer<typeof createProductFormSchema>
@@ -280,12 +281,15 @@ export const DialogFormProduct = ({
                         />
                     </TabsContent>
                 </Tabs>
-                <Button type="submit" disabled={disabled}>
-                    Save Product
-                </Button>
-                <Button type="button" variant={"outline"} onClick={onClose} className="ml-4">
-                    Cancel
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button type="submit" disabled={disabled}>
+                        {disabled && <Loader className="animate-spin" />}
+                        Create product
+                    </Button>
+                    <Button type="button" disabled={disabled} variant={"outline"} onClick={onClose}>
+                        Cancel
+                    </Button>
+                </div>
             </form>
         </Form>
     )

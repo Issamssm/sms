@@ -17,27 +17,30 @@ export async function GET(req: Request) {
             return new NextResponse("Dashboard ID is required", { status: 400 });
         }
 
-        const inventoryIncome = await db.inventoryIncome.findMany({
-            where: { dashboardId },
-            include: {
-                product: {
-                    select: {
-                        name: true
-                    }
-                }
-            }
-        });
-
-        const inventoryOutcome = await db.inventoryOutcome.findMany({
-            where: { dashboardId },
-            include: {
-                product: {
-                    select: {
-                        name: true
-                    }
-                }
-            }
-        });
+        const [inventoryIncome, inventoryOutcome] = await Promise.all([
+            db.inventoryIncome.findMany({
+                where: { dashboardId },
+                select: {
+                    id: true,
+                    quantity: true,
+                    costPrice: true,
+                    purchaseDate: true,
+                    product: { select: { name: true } },
+                    dashboardId: true,
+                },
+            }),
+            db.inventoryOutcome.findMany({
+                where: { dashboardId },
+                select: {
+                    id: true,
+                    quantity: true,
+                    sellingPrice: true,
+                    shippedAt: true,
+                    product: { select: { name: true } },
+                    dashboardId: true,
+                },
+            })
+        ]);
 
         const inventories = [
             ...inventoryIncome.map(item => ({
@@ -68,21 +71,19 @@ export async function GET(req: Request) {
 }
 
 export async function DELETE(
-    req: Request,
+    req: Request
 ) {
     try {
         const { userId } = await auth();
 
-        const url = new URL(req.url);
-        const dashboardId = url.searchParams.get("dashboardId");
-
-        const { searchParams } = new URL(req.url);
-        const id = searchParams.get("id");
-        const type = searchParams.get("type");
-
         if (!userId) {
             return new NextResponse("Unauthorized", { status: 403 });
         }
+
+        const url = new URL(req.url);
+        const dashboardId = url.searchParams.get("dashboardId");
+        const id = url.searchParams.get("id");
+        const type = url.searchParams.get("type");
 
         if (!dashboardId) {
             return new NextResponse("Dashboard ID is required", { status: 400 });
@@ -96,19 +97,44 @@ export async function DELETE(
             return new NextResponse("Invalid inventory type", { status: 400 });
         }
 
-        if (type === "income") {
-            await db.inventoryIncome.delete({
-                where: { dashboardId, id },
+        const inventory = type === "income"
+            ? await db.inventoryIncome.findUnique({
+                where: { id, dashboardId },
+                select: { quantity: true, productId: true },
+            })
+            : await db.inventoryOutcome.findUnique({
+                where: { id, dashboardId },
+                select: { quantity: true, productId: true },
             });
-        } else if (type === "outcome") {
-            await db.inventoryOutcome.delete({
-                where: { dashboardId, id },
-            });
+
+        if (!inventory) {
+            return new NextResponse("Inventory record not found", { status: 404 });
         }
+
+        const quantityChange = inventory.quantity;
+        const productId = inventory.productId;
+
+        await db.$transaction(async (prisma) => {
+            if (type === "income") {
+                await prisma.inventoryIncome.delete({ where: { id, dashboardId } });
+
+                await prisma.product.update({
+                    where: { id: productId },
+                    data: { currentStock: { decrement: quantityChange } },
+                });
+            } else {
+                await prisma.inventoryOutcome.delete({ where: { id, dashboardId } });
+
+                await prisma.product.update({
+                    where: { id: productId },
+                    data: { currentStock: { increment: quantityChange } },
+                });
+            }
+        });
 
         return new NextResponse("Deleted successfully", { status: 200 });
     } catch (error) {
-        console.log('[INVENTORY_DELETE]', error);
+        console.error("[INVENTORY_DELETE]", error);
         return new NextResponse("Internal error", { status: 500 });
     }
-};
+}
