@@ -12,13 +12,12 @@ export async function POST(
         const {
             productId,
             quantity,
-            costPrice,
-            purchaseDate,
-            supplierId,
+            sellingPrice,
             invoiceNumber,
             location,
-            expiryDate,
-            notes
+            shippedAt,
+            notes,
+            customerId
         } = body;
 
         const url = new URL(req.url);
@@ -33,25 +32,24 @@ export async function POST(
         }
 
         await db.$transaction([
-            db.inventoryIncome.create({
+            db.inventoryOutcome.create({
                 data: {
                     dashboardId,
                     productId,
                     quantity,
-                    costPrice,
-                    purchaseDate,
-                    supplierId,
+                    sellingPrice,
                     invoiceNumber,
                     location,
-                    expiryDate,
-                    notes
+                    shippedAt,
+                    notes,
+                    customerId
                 }
             }),
             db.product.update({
                 where: { id: productId },
                 data: {
                     currentStock: {
-                        increment: quantity
+                        decrement: quantity
                     }
                 }
             })

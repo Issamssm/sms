@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-
+import { MinusCircle, PlusCircle } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,10 +14,11 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { DialogFormInventoryIncome } from "./dialog-form-inventroyincome"
+import { DialogFormInventoryOutcome } from "./dialog-form-inventroyoutcome"
+
 import { useGetProducts } from "@/features/products/api/use-get-products"
+
 import { useDashboardId } from "@/hooks/use-dashboard-id"
-import { MinusCircle, PlusCircle } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 type Props = {
     label: string;
@@ -42,9 +44,9 @@ export function InventoryDialog({
 
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={setOpen} aria-modal="true">
             <DialogTrigger asChild>
-                <Button className={cn( "w-full md:w-fit",
+                <Button className={cn("w-full md:w-fit",
                     type === "income" && "bg-green-600 hover:bg-green-700 text-white",
                     type === "outcome" && "bg-red-600 hover:bg-red-700 text-white",
                 )} disabled={productsLoading}>
@@ -64,7 +66,13 @@ export function InventoryDialog({
                         ProductOptions={ProductOptions}
                     />
                 }
-                {type === "outcome" && "outcome inventory"}
+                {type === "outcome" &&
+                    <DialogFormInventoryOutcome
+                        dashboardId={dashboardId}
+                        onClose={() => setOpen(false)}
+                        ProductOptions={ProductOptions}
+                    />
+                }
             </DialogContent>
         </Dialog>
     )

@@ -24,15 +24,6 @@ const InventoriesPage = () => {
     
     const isDisabled = inventoriesLoading || deleteInventories.isPending;
 
-    const typeOptions = [
-        {
-            label: "Income"
-        },
-        {
-            label: "Outcome"
-        }
-    ]
-
     if (inventoriesLoading) {
         return (
             <div className="mx-auto w-full px-4 md:px-6 py-4">
@@ -99,13 +90,6 @@ const InventoriesPage = () => {
                     );
                 }}
                 disabled={isDisabled}
-                facetedFilters={[
-                    {
-                        options: typeOptions,
-                        facetedFilterKey: 'type',
-                        facetedFilterTitle: 'Type',
-                    }
-                ]}
             />
         </div>
     )

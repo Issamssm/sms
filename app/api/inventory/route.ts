@@ -27,6 +27,8 @@ export async function GET(req: Request) {
                     purchaseDate: true,
                     product: { select: { name: true } },
                     dashboardId: true,
+                    productId: true,
+                    createdAt: true
                 },
             }),
             db.inventoryOutcome.findMany({
@@ -38,6 +40,8 @@ export async function GET(req: Request) {
                     shippedAt: true,
                     product: { select: { name: true } },
                     dashboardId: true,
+                    productId: true,
+                    createdAt: true
                 },
             })
         ]);
@@ -51,6 +55,8 @@ export async function GET(req: Request) {
                 product: item.product.name,
                 type: "income",
                 dashboardId: item.dashboardId,
+                productId: item.productId,
+                createdAt: item.createdAt,
             })),
             ...inventoryOutcome.map(item => ({
                 id: item.id,
@@ -60,6 +66,8 @@ export async function GET(req: Request) {
                 product: item.product.name,
                 type: "outcome",
                 dashboardId: item.dashboardId,
+                productId: item.productId,
+                createdAt: item.createdAt,
             }))
         ];
 

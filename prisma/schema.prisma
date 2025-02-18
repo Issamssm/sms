@@ -119,7 +119,6 @@ model InventoryIncome {
   supplier          Supplier?       @relation(fields: [supplierId], references: [id])
   purchaseDate      DateTime        @default(now())
   invoiceNumber     String?
-  addedDate         DateTime        @default(now()) 
   expiryDate        DateTime?
   location          String?
   notes             String? 
@@ -141,7 +140,7 @@ model InventoryOutcome {
   sellingPrice      Decimal         @default(0)
   customerId        String?
   customer          Customer?       @relation(fields: [customerId], references: [id])
-  invoiceNumber     String?         @unique
+  invoiceNumber     String? 
   shippedAt         DateTime        @default(now())  
   location          String    
   notes             String? 

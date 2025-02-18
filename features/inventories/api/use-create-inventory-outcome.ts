@@ -1,14 +1,14 @@
-import { InventoryIncomeFormSchema } from "@/schema/inventory";
+import { InventoryOutcomeFormSchema } from "@/schema/inventory";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import toast from 'react-hot-toast';
 import { z } from "zod";
 
 
-type RequestType = z.infer<typeof InventoryIncomeFormSchema>
+type RequestType = z.infer<typeof InventoryOutcomeFormSchema>
 
 
-export const useCreateInventoryIncome = (dashboardId: string) => {
+export const useCreateInventoryOutcome = (dashboardId: string) => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation<
@@ -17,7 +17,7 @@ export const useCreateInventoryIncome = (dashboardId: string) => {
         RequestType
     >({
         mutationFn: async (json) => {
-            const response = await axios.post(`/api/inventory/income?dashboardId=${dashboardId}`, json);
+            const response = await axios.post(`/api/inventory/outcome?dashboardId=${dashboardId}`, json);
             return response.data;
         },
         onSuccess: () => {
