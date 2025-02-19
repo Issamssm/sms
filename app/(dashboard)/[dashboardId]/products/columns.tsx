@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 
@@ -56,6 +57,16 @@ export const columns: ColumnDef<ResponseType>[] = [
                     Name
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
+            )
+        },
+        cell: ({ row }) => {
+            return (
+                <Link
+                    href={`/${row.original.dashboardId}/products/${row.original.id}`}
+                    className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
+                >
+                    {row.original.name}
+                </Link>
             )
         }
     },

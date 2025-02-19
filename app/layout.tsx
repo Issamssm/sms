@@ -7,6 +7,7 @@ import {
 } from '@clerk/nextjs'
 import { QueryProvider } from "@/providers/query-provider";
 import { Toaster } from 'react-hot-toast';
+import { DialogProvider } from "@/providers/dialog-provider";
 
 
 const geistSans = Geist({
@@ -38,6 +39,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             <Toaster />
+            <DialogProvider />
             {children}
           </QueryProvider>
         </body>

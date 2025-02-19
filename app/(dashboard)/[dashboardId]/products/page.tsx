@@ -5,35 +5,35 @@ import { columns } from './columns'
 import { DataTable } from '@/components/data-table'
 import { Skeleton } from '@/components/ui/skeleton'
 
-import { AddProductDialog } from '@/features/products/components/add-product-dialog'
 import { useGetProducts } from '@/features/products/api/use-get-products'
 import { useBulkDeleteProducts } from '@/features/products/api/use-bulkdelete-product'
-import { useGetAutoUpdateStatus } from '@/features/dashboard/api/use-get-autoUpdateStatus'
 import { useGetCategories } from '@/features/categories/api/use-get-categories'
 
 import { useDashboardId } from '@/hooks/use-dashboard-id'
 
-import { Loader2 } from 'lucide-react'
+import { Loader2, PlusCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { Button } from '@/components/ui/button'
+import { useNewProduct } from '@/features/products/hook/use-new-product-dialog'
 
 
 const ProductsPage = () => {
 
   const dashboardId = useDashboardId()
+  const { onOpen } = useNewProduct()
+
   const productsQuery = useGetProducts(dashboardId)
   const deleteProducts = useBulkDeleteProducts(dashboardId)
-  const autoUpdateQuery = useGetAutoUpdateStatus(dashboardId)
   const categoriesQuery = useGetCategories(dashboardId);
 
   const products = productsQuery.data || []
-  const autoUpdateStatus = autoUpdateQuery.data?.autoUpdateStatus
   const isDisabled = productsQuery.isLoading || deleteProducts.isPending;
 
   const options = (categoriesQuery.data ?? []).map((category) => ({
     label: category.name
   }))
 
-  if (productsQuery.isLoading || autoUpdateQuery.isLoading) {
+  if (productsQuery.isLoading) {
     return (
       <div className="mx-auto w-full px-4 md:px-6 py-4">
         <div className="flex items-center justify-between mb-12 gap-3">
@@ -60,10 +60,14 @@ const ProductsPage = () => {
           </div>
         </div>
         <div className='flex items-center gap-2 flex-wrap w-full md:w-fit'>
-          <AddProductDialog
-            dashboardId={dashboardId}
-            autoUpdateStatus={autoUpdateStatus}
-          />
+          <Button
+            size={"sm"}
+            className="text-sm md:w-auto w-full"
+            onClick={() => onOpen()}
+          >
+            <PlusCircle className="size-4 mr-2" />
+            Add Product
+          </Button>
         </div>
       </div>
       <DataTable

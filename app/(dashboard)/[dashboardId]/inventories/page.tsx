@@ -1,27 +1,30 @@
 "use client"
 
+import toast from 'react-hot-toast'
 import { columns } from './columns'
 
 import { DataTable } from '@/components/data-table'
 import { Skeleton } from '@/components/ui/skeleton'
-import { InventoryDialog } from '@/features/inventories/components/add-inventory-dialog'
+import { Button } from '@/components/ui/button'
 
 import { useGetInventories } from '@/features/inventories/api/use-get-inventories'
 import { useBulkDeleteInventories } from '@/features/inventories/api/use-bulkdelete-inventory'
 
 import { useDashboardId } from '@/hooks/use-dashboard-id'
+import { useNewInventory } from '@/features/inventories/hook/use-new-inventory-dialog'
 
-import { Loader2 } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { Loader2, MinusCircle, PlusCircle } from 'lucide-react'
 
 
 const InventoriesPage = () => {
 
     const dashboardId = useDashboardId()
+    const { onOpen } = useNewInventory()
+
     const { data: inventories = [], isLoading: inventoriesLoading, isError } = useGetInventories(dashboardId)
-    
+
     const deleteInventories = useBulkDeleteInventories(dashboardId)
-    
+
     const isDisabled = inventoriesLoading || deleteInventories.isPending;
 
     if (inventoriesLoading) {
@@ -54,24 +57,27 @@ const InventoriesPage = () => {
                         Inventories Page
                     </h1>
                     <div className="text-sm text-gray-500 mb-4 md:max-w-xl">
-                        You can manage and view all inventory records associated with your dashboard. 
-                        This includes adding new inventory entries, deleting existing ones, and navigating 
+                        You can manage and view all inventory records associated with your dashboard.
+                        This includes adding new inventory entries, deleting existing ones, and navigating
                         to the detailed view of each inventory item for further editing.
                     </div>
                 </div>
                 <div className='flex items-center gap-2 w-full md:w-fit'>
-                    <InventoryDialog 
-                        title="Add New Stock Entry"
-                        label='Stock Income'
-                        description='Enter the details for the new inventory income.'
-                        type="income"
-                    />
-                    <InventoryDialog 
-                        title='Register Stock Usage'
-                        label='Stock Outcome'
-                        description='Enter the details for the new inventory outcome.'
-                        type="outcome"
-                    />
+                    <Button
+                        className={"w-full md:w-fit income" && "bg-green-600 hover:bg-green-700 text-white"}
+                        onClick={() => onOpen("income")}
+                    >
+                        <PlusCircle />
+                        Stock Income
+                    </Button>
+                    <Button
+                        className={"w-full md:w-fit outcome" && "bg-red-600 hover:bg-red-700 text-white"}
+                        onClick={() => onOpen("outcome")}
+
+                    >
+                        <MinusCircle />
+                        Stock Outcome
+                    </Button>
                 </div>
             </div>
             <DataTable

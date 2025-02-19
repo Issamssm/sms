@@ -7,7 +7,7 @@ type InventoryItem = {
     price: number;
     date: Date;
     product: string;
-    type: string;
+    type: "income" | "outcome";
     dashboardId: string;
     productId: string;
 }

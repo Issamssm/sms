@@ -1,4 +1,4 @@
-import { useGetInventoriesByProductId } from "@/features/inventories/api/use-get-inventories";
+import { useGetInventoriesByProductIdForCost } from "@/features/inventories/api/use-get-inventories";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -25,7 +25,7 @@ export function CalculateCost({
   method?: "FIFO" | "LIFO" | "CUMP" | "HPP" | "LPP" | "MANUAL";
 }) {
 
-  const { ascInventoryIncome, descInventoryIncome, ascInventoryOutcome } = useGetInventoriesByProductId(
+  const { ascInventoryIncome, descInventoryIncome, ascInventoryOutcome } = useGetInventoriesByProductIdForCost(
     dashboardId,
     productId
   );

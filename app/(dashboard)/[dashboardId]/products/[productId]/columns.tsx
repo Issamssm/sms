@@ -15,7 +15,7 @@ type InventoryItem = {
     quantity: number;
     price: number;
     date: Date;
-    type: string;
+    type: "income" | "outcome";
     dashboardId: string
 }
 

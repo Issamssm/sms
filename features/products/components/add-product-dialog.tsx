@@ -1,17 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { PlusCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
 import { DialogFormProduct } from "./dialog-form-product"
 
@@ -22,27 +19,26 @@ import { useCreateProduct } from "@/features/products/api/use-create-product"
 import { createProductFormSchema } from "@/schema/products"
 import { usePathname } from "next/navigation"
 import { useForm } from "react-hook-form"
+import { useNewProduct } from "../hook/use-new-product-dialog"
+import { useGetAutoUpdateStatus } from "@/features/dashboard/api/use-get-autoUpdateStatus"
+import { useDashboardId } from "@/hooks/use-dashboard-id"
 
-type Props = {
-    dashboardId: string;
-    autoUpdateStatus: boolean | undefined;
-}
 
-export function AddProductDialog({
-    dashboardId,
-    autoUpdateStatus
-}: Props) {
-    const [open, setOpen] = useState(false)
+export function AddProductDialog() {
+    const {isOpen, onClose} = useNewProduct()
+    const dashboardId = useDashboardId();
     const pathname = usePathname();
 
     useEffect(() => {
-        setOpen(false);
-    }, [pathname]);
+        onClose();
+    }, [pathname, onClose]);
 
     const CreateMutation = useCreateProduct(dashboardId)
     const categoriesQuery = useGetCategories(dashboardId)
     const CategoryMutation = useCreateCategorie(dashboardId)
+    const autoUpdateQuery = useGetAutoUpdateStatus(dashboardId)
 
+    const autoUpdateStatus = autoUpdateQuery.data?.autoUpdateStatus
     const CategoryOptions = (categoriesQuery.data ?? []).map((category) => ({
         label: category.name,
         value: category.id
@@ -73,20 +69,14 @@ export function AddProductDialog({
     const onSubmit = (values: ProductFormValues) => {
         CreateMutation.mutate(values, {
             onSuccess: () => {
-                setOpen(false);
+                onClose();
                 form.reset()
             }
         })
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button size={"sm"} className="text-sm md:w-auto w-full">
-                    <PlusCircle className="size-4 mr-2" />
-                    Add Product
-                </Button>
-            </DialogTrigger>
+        <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px] md:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle>Add New Product</DialogTitle>
@@ -101,7 +91,7 @@ export function AddProductDialog({
                     disabled={isPending}
                     categoryOptions={CategoryOptions}
                     onCreateCategory={onCreateCategory}
-                    onClose={() => setOpen(false)}
+                    onClose={() => onClose()}
                     isLoading={isLoading}
                 />
             </DialogContent>

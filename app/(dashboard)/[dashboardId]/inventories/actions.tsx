@@ -1,7 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation";
-import { FileText, MoreHorizontal, Trash } from "lucide-react";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,11 +18,10 @@ import { useConfirm } from "@/hooks/use-confirm";
 type Props = {
     id: string;
     dashboardId: string;
-    type: string
+    type: "income" | "outcome"
 }
 
 export const Actions = ({ id, dashboardId, type }: Props) => {
-    const router = useRouter()
     const [ConfirmDialog, confirm] = useConfirm(
         "Delete Inventory",
         "Are you sure you want to delete this inventory?"
@@ -50,10 +48,10 @@ export const Actions = ({ id, dashboardId, type }: Props) => {
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem
                         disabled={deleteMutation.isPending}
-                        onClick={() => router.push(`/${dashboardId}/inventories/${id}`)}
+                        // onClick={}
                     >
-                        <FileText className="size-4 mr-2" />
-                        Details
+                        <Edit className="size-4 mr-2" />
+                        Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         disabled={deleteMutation.isPending}

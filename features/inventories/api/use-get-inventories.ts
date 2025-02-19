@@ -7,7 +7,7 @@ type InventoryItem = {
     price: number;
     date: Date;
     product: string;
-    type: string;
+    type: "income" | "outcome";
     dashboardId: string;
     productId: string;
     createdAt: Date
@@ -31,7 +31,7 @@ export const useGetInventories = (dashboardId: string) => {
     return query;
 };
 
-export const useGetInventoriesByProductId = (dashboardId: string, productId?: string) => {
+export const useGetInventoriesByProductIdForCost = (dashboardId: string, productId?: string) => {
     const queryClient = useQueryClient();
 
     const inventoriesData = queryClient.getQueryData<InventoryItem[]>(["inventories", dashboardId]);
