@@ -28,6 +28,7 @@ import { useDashboardId } from "@/hooks/use-dashboard-id"
 import { useProductId } from "@/hooks/use-product-id"
 
 import { editProductFormSchema } from "@/schema/products"
+import { ProductInventoryTable } from "./product-inventory-table"
 
 const ProductPage = () => {
     const dashboardId = useDashboardId()
@@ -52,7 +53,6 @@ const ProductPage = () => {
 
     const isPending = CategoryMutation.isPending || EditMutation.isPending;
     const isLoading = categoriesQuery.isLoading;
-
 
     const CategoryOptions = (categoriesQuery.data ?? []).map((category) => ({
         label: category.name,
@@ -112,6 +112,18 @@ const ProductPage = () => {
         )
     }
 
+    if (!productQuery.data) {
+        return (
+            <div className="flex flex-col items-center justify-center h-96 text-center">
+                <h1 className="text-4xl font-bold text-red-500">404</h1>
+                <p className="text-lg text-gray-600 mt-2">Product not found</p>
+                <Link href={`/${dashboardId}/products`} className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition">
+                    Go Back to Products
+                </Link>
+            </div>
+        )
+    }
+
     type ProductFormValues = z.infer<typeof editProductFormSchema>
 
 
@@ -164,7 +176,7 @@ const ProductPage = () => {
                         />
                     </TabsContent>
                     <TabsContent value="inventory" className="space-y-4">
-
+                        <ProductInventoryTable currentQuantity={productQuery.data.currentStock ?? 0}/>
                     </TabsContent>
                     <TabsContent value="pricing" className="space-y-4">
 

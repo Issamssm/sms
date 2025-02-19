@@ -24,6 +24,11 @@ export const useBulkDeleteCategories = (dashboardId: string) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["categories", dashboardId] });
+            queryClient.invalidateQueries({
+                predicate: (query) =>
+                    query.queryKey[0] === "product" &&
+                    query.queryKey[1] === dashboardId
+            });
         }
     });
     return mutation;

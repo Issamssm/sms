@@ -24,8 +24,12 @@ export const useEditProduct = (dashboardId: string, id: string) => {
             toast.success("Product edited");
             queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["product", dashboardId, id] });
-            queryClient.invalidateQueries({ queryKey: ["categories", dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["inventories", dashboardId] });
+            queryClient.invalidateQueries({
+                predicate: (query) =>
+                    query.queryKey[0] === "inventory" &&
+                    query.queryKey[1] === dashboardId
+            });
         },
         onError: (error: AxiosError) => {
             const errorMessage = (error.response?.data as { message: string })?.message;

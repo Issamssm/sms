@@ -31,7 +31,7 @@ export const useGetInventories = (dashboardId: string) => {
     return query;
 };
 
-export const useGetInventoryIncomeByProductId = (dashboardId: string, productId?: string) => {
+export const useGetInventoriesByProductId = (dashboardId: string, productId?: string) => {
     const queryClient = useQueryClient();
 
     const inventoriesData = queryClient.getQueryData<InventoryItem[]>(["inventories", dashboardId]);

@@ -8,14 +8,13 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 
 import { format } from "date-fns"
 
-import { Actions } from "./actions"
+import { Actions } from "../../inventories/actions"
 
 type InventoryItem = {
     id: string;
     quantity: number;
     price: number;
     date: Date;
-    product: string;
     type: string;
     dashboardId: string
 }
@@ -56,20 +55,6 @@ export const columns: ColumnDef<InventoryItem>[] = [
         ),
         enableSorting: false,
         enableHiding: false,
-    },
-    {
-        accessorKey: "product",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Product
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        }
     },
     {
         accessorKey: "quantity",
@@ -143,21 +128,21 @@ export const columns: ColumnDef<InventoryItem>[] = [
     {
         accessorKey: "type",
         filterFn: multiSelectFilter,
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Type
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        }, cell: ({ getValue }) => {
-            return getValue() === "income"
-                ? <span className="text-green-600">Income</span>
-                : <span className="text-red-600">Outcome</span>;
-        }
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Type
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ getValue }) =>
+            getValue() === "income" ? (
+                <span className="text-green-600">Income</span>
+            ) : (
+                <span className="text-red-600">Outcome</span>
+            ),
     },
     {
         id: "actions",

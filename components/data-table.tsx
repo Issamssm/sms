@@ -31,7 +31,7 @@ import { DataTableFilter } from "./data-table-filter"
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
-    filterKey: string
+    filterKey?: string
     onDelete: (rows: Row<TData>[]) => void
     disabled?: boolean
     facetedFilters?: {
@@ -82,42 +82,46 @@ export function DataTable<TData, TValue>({
         <div>
             <ConfirmDialog />
             <div className="flex flex-wrap py-3 gap-3">
-                {facetedFilters && facetedFilters.map((filter, index) => (
-                    <DataTableFilter
-                        key={index}
-                        column={table.getColumn(filter.facetedFilterKey)}
-                        title={filter.facetedFilterTitle}
-                        options={filter.options}
-                    />
-                ))}
                 <div className="flex items-center justify-between gap-2 w-full">
-                    <Input
-                        placeholder={`Filter ${filterKey}...`}
-                        value={(table.getColumn(`${filterKey}`)?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn(`${filterKey}`)?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-sm"
-                    />
-                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
-                        <Button
-                            size={"sm"}
-                            disabled={disabled}
-                            variant={"outline"}
-                            className="ml-auto font-normal text-xs h-10"
-                            onClick={async () => {
-                                const ok = await confirm()
+                    <div className="flex items-center flex-wrap gap-3">
+                        {facetedFilters && facetedFilters.map((filter, index) => (
+                            <DataTableFilter
+                                key={index}
+                                column={table.getColumn(filter.facetedFilterKey)}
+                                title={filter.facetedFilterTitle}
+                                options={filter.options}
+                            />
+                        ))}
+                        {filterKey && <Input
+                            placeholder={`Filter ${filterKey}...`}
+                            value={(table.getColumn(`${filterKey}`)?.getFilterValue() as string) ?? ""}
+                            onChange={(event) =>
+                                table.getColumn(`${filterKey}`)?.setFilterValue(event.target.value)
+                            }
+                            className="max-w-sm"
+                        />}
+                    </div>
+                    <div className="flex h-full flex-col-reverse">
+                        {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                            <Button
+                                size={"sm"}
+                                disabled={disabled}
+                                variant={"outline"}
+                                className="ml-auto font-normal text-xs h-10"
+                                onClick={async () => {
+                                    const ok = await confirm()
 
-                                if (ok) {
-                                    onDelete(table.getFilteredSelectedRowModel().rows)
-                                    table.resetRowSelection();
-                                }
-                            }}
-                        >
-                            <Trash className="size-4" />
-                            Delete ({table.getFilteredSelectedRowModel().rows.length})
-                        </Button>
-                    )}
+                                    if (ok) {
+                                        onDelete(table.getFilteredSelectedRowModel().rows)
+                                        table.resetRowSelection();
+                                    }
+                                }}
+                            >
+                                <Trash className="size-4" />
+                                Delete ({table.getFilteredSelectedRowModel().rows.length})
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </div>
             <div className="rounded-md border bg-white">

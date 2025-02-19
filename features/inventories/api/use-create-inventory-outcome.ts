@@ -24,6 +24,16 @@ export const useCreateInventoryOutcome = (dashboardId: string) => {
             toast.success("Inventory created");
             queryClient.invalidateQueries({ queryKey: ["inventories", dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
+            queryClient.invalidateQueries({
+                predicate: (query) =>
+                    query.queryKey[0] === "inventory" &&
+                    query.queryKey[1] === dashboardId
+            });
+            queryClient.invalidateQueries({
+                predicate: (query) =>
+                    query.queryKey[0] === "product" &&
+                    query.queryKey[1] === dashboardId
+            });
         },
         onError: (error: AxiosError) => {
             const errorMessage = (error.response?.data as { message: string })?.message;

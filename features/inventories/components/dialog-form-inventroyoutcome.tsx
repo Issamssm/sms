@@ -210,7 +210,7 @@ export const DialogFormInventoryOutcome = ({
                                             </FormControl>
                                             {!!totalCost && (
                                                 <div className="text-xs text-green-700">
-                                                    Total: <span className="text-xs font-semibold">{totalCost}</span>
+                                                    Total: <span className="text-xs font-semibold">{parseFloat((totalCost).toFixed(2))}</span>
                                                 </div>
                                             )}
                                             <FormMessage />

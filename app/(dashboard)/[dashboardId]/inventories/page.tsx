@@ -89,6 +89,13 @@ const InventoriesPage = () => {
                         }
                     );
                 }}
+                facetedFilters={[
+                    {
+                        options: [{ label: "income" }, { label: "outcome" }],
+                        facetedFilterKey: 'type',
+                        facetedFilterTitle: 'Type',
+                    }
+                ]}
                 disabled={isDisabled}
             />
         </div>

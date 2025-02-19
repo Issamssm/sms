@@ -68,7 +68,7 @@ enum MeasurementUnit {
 
 model Product {
   id                String          @id @default(uuid())
-  name              String          @unique
+  name              String
   description       String?
   status            ProductStatus   @default(OUT_OF_STOCK)
   sellingPrice      Decimal?        @default(0)

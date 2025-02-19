@@ -1,10 +1,17 @@
-import { useGetInventoryIncomeByProductId } from "@/features/inventories/api/use-get-inventories";
+import { useGetInventoriesByProductId } from "@/features/inventories/api/use-get-inventories";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+export const formatCurrency = (amount: number, currency: string = "USD") => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency,
+  }).format(amount);
+};
 
 export function CalculateCost({
   productId,
@@ -18,7 +25,7 @@ export function CalculateCost({
   method?: "FIFO" | "LIFO" | "CUMP" | "HPP" | "LPP" | "MANUAL";
 }) {
 
-  const { ascInventoryIncome, descInventoryIncome, ascInventoryOutcome } = useGetInventoryIncomeByProductId(
+  const { ascInventoryIncome, descInventoryIncome, ascInventoryOutcome } = useGetInventoriesByProductId(
     dashboardId,
     productId
   );

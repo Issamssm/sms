@@ -35,24 +35,36 @@ export async function DELETE(req: Request) {
             });
 
             await Promise.all([
-                prisma.inventoryIncome.deleteMany({ where: { id: { in: incomes.map(i => i.id) } } }),
-                prisma.inventoryOutcome.deleteMany({ where: { id: { in: outcomes.map(o => o.id) } } }),
+                prisma.inventoryIncome.deleteMany({
+                    where: { id: { in: incomes.map((i) => i.id) } },
+                }),
+                prisma.inventoryOutcome.deleteMany({
+                    where: { id: { in: outcomes.map((o) => o.id) } },
+                }),
             ]);
 
-            await Promise.all([
-                ...incomes.map(i =>
+            const productNetChanges = new Map<string, number>();
+
+            incomes.forEach(({ productId, quantity }) => {
+                const current = productNetChanges.get(productId) || 0;
+                productNetChanges.set(productId, current - quantity);
+            });
+
+            outcomes.forEach(({ productId, quantity }) => {
+                const current = productNetChanges.get(productId) || 0;
+                productNetChanges.set(productId, current + quantity);
+            });
+
+            const updatePromises = [];
+            for (const [productId, netChange] of productNetChanges) {
+                updatePromises.push(
                     prisma.product.update({
-                        where: { id: i.productId },
-                        data: { currentStock: { decrement: i.quantity } },
+                        where: { id: productId },
+                        data: { currentStock: { increment: netChange } },
                     })
-                ),
-                ...outcomes.map(o =>
-                    prisma.product.update({
-                        where: { id: o.productId },
-                        data: { currentStock: { increment: o.quantity } },
-                    })
-                ),
-            ]);
+                );
+            }
+            await Promise.all(updatePromises);
         });
 
         return NextResponse.json({ message: "Inventories deleted successfully" });

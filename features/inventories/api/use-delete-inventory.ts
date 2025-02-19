@@ -21,9 +21,18 @@ export const useDeleteInventory = (id: string, dashboardId: string, type: string
             );
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["inventory", id, dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["inventories", dashboardId] });
             queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
+            queryClient.invalidateQueries({
+                predicate: (query) =>
+                    query.queryKey[0] === "inventory" &&
+                    query.queryKey[1] === dashboardId
+            });
+            queryClient.invalidateQueries({
+                predicate: (query) =>
+                    query.queryKey[0] === "product" &&
+                    query.queryKey[1] === dashboardId
+            });
         },
     });
 
