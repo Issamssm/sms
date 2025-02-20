@@ -7,30 +7,29 @@ import { Card, CardContent } from "@/components/ui/card"
 
 import { columns } from "./columns"
 
+import { InventoryProductItem } from "@/features/products/api/use-get-product"
 import { useBulkDeleteInventories } from "@/features/inventories/api/use-bulkdelete-inventory"
-import { useGetInventoriesByProductId } from "@/features/inventories/api/use-get-inventories-by-productId"
 
 import { useDashboardId } from "@/hooks/use-dashboard-id"
-import { useProductId } from "@/hooks/use-product-id"
 import { BarChart3, DollarSign, Loader2, Package } from "lucide-react"
 
 type Props = {
-    currentQuantity: string;
+    currentQuantity: number;
+    inventories: InventoryProductItem[];
+    isLoading: boolean;
 }
 
 export const ProductInventoryTable = ({
     currentQuantity,
+    inventories,
+    isLoading
 }: Props) => {
     const dashboardId = useDashboardId()
-    const productId = useProductId();
 
-    const inventoriesQuery = useGetInventoriesByProductId(dashboardId, productId)
     const deleteInventories = useBulkDeleteInventories(dashboardId)
 
 
-    const isDisabled = inventoriesQuery.isLoading || deleteInventories.isPending;
-
-    const inventories = inventoriesQuery.data || [];
+    const isDisabled = isLoading || deleteInventories.isPending;
 
     const totalCostsPrice = inventories
         .filter(item => item.type === "income")
@@ -39,7 +38,7 @@ export const ProductInventoryTable = ({
         .filter(item => item.type === "outcome")
         .reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-    if (inventoriesQuery.isLoading) {
+    if (isLoading) {
         return (
             <div className="mx-auto w-full px-4 md:px-6 py-4">
                 <div className="flex items-center justify-between mb-12 gap-3">

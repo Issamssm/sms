@@ -33,6 +33,9 @@ import { DatePicker } from "@/components/date-picker"
 import { useCreateInventoryIncome } from "@/features/inventories/api/use-create-inventory-income"
 import { InventoryIncomeFormSchema } from "@/schema/inventory"
 import { Loader } from "lucide-react"
+import { InventoryItem } from "../api/use-get-inventory"
+import { useEditInventoryIncome } from "../api/use-edit-inventory-income"
+import { cn } from "@/lib/utils"
 
 type InventoryIncomeFormValue = z.infer<typeof InventoryIncomeFormSchema>
 
@@ -45,27 +48,46 @@ type Props = {
         stockMethode: $Enums.ProductStocks;
     }[];
     dashboardId: string
+    initialValues?: InventoryItem
+    id?: string
 }
 
 export const DialogFormInventoryIncome = ({
     onClose,
     ProductOptions,
-    dashboardId
+    dashboardId,
+    initialValues,
+    id
 }: Props) => {
     const CreateMutation = useCreateInventoryIncome(dashboardId)
+    const EditMutation = useEditInventoryIncome(dashboardId, id)
+
+    const defaultValues = initialValues ? {
+        productId: initialValues.productId,
+        quantity: initialValues.quantity,
+        costPrice: initialValues.price,
+        notes: initialValues.notes ?? "",
+        purchaseDate: initialValues.date ? new Date(initialValues.date) : new Date(),
+        invoiceNumber: initialValues.invoiceNumber ?? "",
+        location: initialValues.location ?? "",
+        supplierId: initialValues.partner ?? undefined,
+        expiryDate: initialValues.expiryDate
+            ? new Date(initialValues.expiryDate)
+            : null,
+    } : {
+        quantity: 0,
+        costPrice: 0,
+        location: "",
+        invoiceNumber: "",
+        purchaseDate: new Date(),
+    }
 
     const form = useForm<z.infer<typeof InventoryIncomeFormSchema>>({
         resolver: zodResolver(InventoryIncomeFormSchema),
-        defaultValues: {
-            quantity: 0,
-            costPrice: 0,
-            location: "",
-            invoiceNumber: "",
-            purchaseDate: new Date()
-        },
+        defaultValues: defaultValues,
     })
 
-    const isPending = CreateMutation.isPending;
+    const isPending = CreateMutation.isPending || EditMutation.isPending;
 
     const watchedQuantity = form.watch("quantity");
     const watchedCostPrice = form.watch("costPrice");
@@ -73,12 +95,24 @@ export const DialogFormInventoryIncome = ({
     const totalCostPrice = watchedQuantity * watchedCostPrice;
 
     const handleSubmit = (values: InventoryIncomeFormValue) => {
-        CreateMutation.mutate(values, {
-            onSuccess: () => {
-                onClose();
-                form.reset()
-            }
-        })
+        if (!id) {
+            CreateMutation.mutate(values, {
+                onSuccess: () => {
+                    onClose();
+                    form.reset()
+                }
+            })
+        } else {
+            EditMutation.mutate({
+                ...values,
+                oldQuantity: initialValues?.quantity
+            }, {
+                onSuccess: () => {
+                    onClose();
+                    form.reset()
+                }
+            })
+        }
     }
 
     return (
@@ -92,29 +126,34 @@ export const DialogFormInventoryIncome = ({
                     </TabsList>
                     <TabsContent value="basic">
                         <div className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="productId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Product</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger disabled={isPending}>
-                                                    <SelectValue placeholder="Select a product" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {ProductOptions.map((product) => (
-                                                    <SelectItem key={product.value} value={product.value}>{product.label}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <div className="grid grid-cols-2 gap-2 md:gap-4">
+                            {!id && (
+                                <FormField
+                                    control={form.control}
+                                    name="productId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Product</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger disabled={isPending}>
+                                                        <SelectValue placeholder="Select a product" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {ProductOptions.map((product) => (
+                                                        <SelectItem key={product.value} value={product.value}>{product.label}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
+                            <div className={cn(
+                                "grid gap-2 md:gap-4",
+                                !id ? "grid-cols-2" : ""
+                            )}>
                                 <FormField
                                     control={form.control}
                                     name="quantity"

@@ -16,7 +16,7 @@ import { useDashboardId } from "@/hooks/use-dashboard-id"
 import { useNewInventory } from "@/features/inventories/hook/use-new-inventory-dialog"
 
 
-export function InventoryDialog() {
+export function AddInventoryDialog() {
     const { isOpen, onClose, type } = useNewInventory()
 
     const dashboardId = useDashboardId()

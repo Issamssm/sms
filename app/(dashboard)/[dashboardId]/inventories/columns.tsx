@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 
@@ -17,7 +18,8 @@ type InventoryItem = {
     date: Date;
     product: string;
     type: "income" | "outcome";
-    dashboardId: string
+    dashboardId: string;
+    productId: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,6 +70,16 @@ export const columns: ColumnDef<InventoryItem>[] = [
                     Product
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
+            )
+        },
+        cell: ({ row }) => {
+            return (
+                <Link
+                    href={`/${row.original.dashboardId}/products/${row.original.productId}`}
+                    className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
+                >
+                    {row.original.product}
+                </Link>
             )
         }
     },

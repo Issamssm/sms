@@ -4,6 +4,7 @@ import Link from "next/link"
 import { z } from "zod"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
+import { $Enums } from "@prisma/client";
 
 import { EditProductForm } from "@/features/products/components/edit-product-form"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -74,26 +75,26 @@ const ProductPage = () => {
     }
 
     const defaultValues = productQuery.data ? {
-        name: productQuery.data.name ?? "",
-        categoryId: productQuery.data.categoryId ?? null,
-        description: productQuery.data.description ?? "",
-        sellingPrice: productQuery.data.sellingPrice ?? 0,
-        priceMethode: productQuery.data.priceMethode ?? "MANUAL",
-        stockMethode: productQuery.data.stockMethode ?? "MANUAL",
-        minInventory: productQuery.data.minInventory ?? 0,
-        measureUnit: productQuery.data.measureUnit ?? "NONE",
-        status: productQuery.data.status ?? "OUT_OF_STOCK",
-        warehouseLocation: productQuery.data.warehouseLocation ?? "",
+        name: productQuery.data.product.name ?? "",
+        categoryId: productQuery.data.product.categoryId ?? null,
+        description: productQuery.data.product.description ?? "",
+        sellingPrice: productQuery.data.product.sellingPrice ?? 0,
+        priceMethode: productQuery.data.product.priceMethode as $Enums.ProductPrice ?? "MANUAL",
+        stockMethode: productQuery.data.product.stockMethode as $Enums.ProductStocks ?? "MANUAL",
+        minInventory: productQuery.data.product.minInventory ?? 0,
+        measureUnit: productQuery.data.product.measureUnit as $Enums.MeasurementUnit ?? "NONE",
+        status: productQuery.data.product.status as $Enums.ProductStatus ?? "OUT_OF_STOCK",
+        warehouseLocation: productQuery.data.product.warehouseLocation ?? "",
     } : {
         name: "",
         categoryId: "",
         description: "",
         sellingPrice: 0,
-        priceMethode: "MANUAL",
-        stockMethode: "MANUAL",
+        priceMethode: "MANUAL" as $Enums.ProductPrice,
+        stockMethode: "MANUAL" as $Enums.ProductStocks,
         minInventory: 0,
-        measureUnit: "NONE",
-        status: "OUT_OF_STOCK",
+        measureUnit: "NONE" as $Enums.MeasurementUnit,
+        status: "OUT_OF_STOCK" as $Enums.ProductStatus,
         warehouseLocation: "",
     };
 
@@ -176,7 +177,11 @@ const ProductPage = () => {
                         />
                     </TabsContent>
                     <TabsContent value="inventory" className="space-y-4">
-                        <ProductInventoryTable currentQuantity={productQuery.data.currentStock ?? 0}/>
+                        <ProductInventoryTable
+                            currentQuantity={productQuery.data.product.currentStock ?? 0}
+                            inventories={productQuery.data.inventories}
+                            isLoading={productQuery.isLoading}
+                        />
                     </TabsContent>
                     <TabsContent value="pricing" className="space-y-4">
 
