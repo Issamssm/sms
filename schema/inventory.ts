@@ -21,9 +21,6 @@ export const InventoryIncomeFormSchema = z.object({
     invoiceNumber: z.string().optional(),
     location: z.string().optional(),
     notes: z.string().optional(),
-    oldQuantity: z.union([z.string(), z.number()])
-        .transform((val) => Number(val))
-        .refine((val) => !isNaN(val) && val >= 0).optional(),
 })
 
 // create InventoryOutcome schema
