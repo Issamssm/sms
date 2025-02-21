@@ -47,13 +47,18 @@ type Props = {
         value: string;
         stockMethode: $Enums.ProductStocks;
     }[];
+    CustomerOptions: {
+        label: string;
+        value: string;
+    }[];
     dashboardId: string
 }
 
 export const DialogFormInventoryOutcome = ({
     onClose,
     ProductOptions,
-    dashboardId
+    dashboardId,
+    CustomerOptions,
 }: Props) => {
     const CreateMutation = useCreateInventoryOutcome(dashboardId)
     const [product, setProduct] = useState<{
@@ -288,9 +293,11 @@ export const DialogFormInventoryOutcome = ({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="supplier1">Supplier 1</SelectItem>
-                                                <SelectItem value="supplier2">Supplier 2</SelectItem>
-                                                {/* Add more suppliers as needed */}
+                                                {CustomerOptions.map((customer) => (
+                                                    <SelectItem key={customer.value} value={customer.value}>
+                                                        {customer.label}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />

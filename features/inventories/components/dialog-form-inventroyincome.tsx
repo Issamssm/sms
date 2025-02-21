@@ -43,6 +43,10 @@ type Props = {
         value: string;
         stockMethode: $Enums.ProductStocks;
     }[];
+    SupplierOptions: {
+        label: string;
+        value: string;
+    }[];
     dashboardId: string
 }
 
@@ -50,6 +54,7 @@ export const DialogFormInventoryIncome = ({
     onClose,
     ProductOptions,
     dashboardId,
+    SupplierOptions,
 }: Props) => {
     const CreateMutation = useCreateInventoryIncome(dashboardId)
 
@@ -248,9 +253,9 @@ export const DialogFormInventoryIncome = ({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="supplier1">Supplier 1</SelectItem>
-                                                <SelectItem value="supplier2">Supplier 2</SelectItem>
-                                                {/* Add more suppliers as needed */}
+                                                {SupplierOptions.map((supplier) => (
+                                                    <SelectItem key={supplier.value} value={supplier.value}>{supplier.label}</SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                         <FormDescription>Choose the supplier from whom you purchased the product.</FormDescription>
