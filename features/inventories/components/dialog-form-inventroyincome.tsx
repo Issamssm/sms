@@ -59,8 +59,6 @@ export const DialogFormInventoryIncome = ({
         defaultValues: {
             quantity: 0,
             costPrice: 0,
-            location: "",
-            invoiceNumber: "",
             purchaseDate: new Date(),
         },
     })
@@ -177,7 +175,6 @@ export const DialogFormInventoryIncome = ({
                                                 value={field.value}
                                             />
                                         </FormControl>
-                                        <FormDescription>Provide a brief notes of the inventory.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}

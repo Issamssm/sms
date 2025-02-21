@@ -26,11 +26,6 @@ export const useCreateInventoryIncome = (dashboardId: string) => {
             queryClient.invalidateQueries({ queryKey: ["products", dashboardId] });
             queryClient.invalidateQueries({
                 predicate: (query) =>
-                    query.queryKey[0] === "inventory" &&
-                    query.queryKey[1] === dashboardId
-            });
-            queryClient.invalidateQueries({
-                predicate: (query) =>
                     query.queryKey[0] === "product" &&
                     query.queryKey[1] === dashboardId
             });

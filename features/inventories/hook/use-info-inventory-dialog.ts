@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type EditInvntoryState = {
+type InfoInvntoryState = {
     id?: string;
     type: "income" | "outcome";
     isOpen: boolean;
@@ -8,7 +8,7 @@ type EditInvntoryState = {
     onClose: () => void;
 }
 
-export const useEditInventory = create<EditInvntoryState>((set) => ({
+export const useInfoInventory = create<InfoInvntoryState>((set) => ({
     id: undefined,
     type: "income",
     isOpen: false,

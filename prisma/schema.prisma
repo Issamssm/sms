@@ -142,7 +142,7 @@ model InventoryOutcome {
   customer          Customer?       @relation(fields: [customerId], references: [id])
   invoiceNumber     String? 
   shippedAt         DateTime        @default(now())  
-  location          String    
+  location          String?    
   notes             String? 
 
   createdAt         DateTime        @default(now())

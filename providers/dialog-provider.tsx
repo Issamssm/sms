@@ -4,7 +4,7 @@ import { useMountedState } from 'react-use';
 
 import { AddInventoryDialog } from '@/features/inventories/components/add-inventory-dialog';
 import { AddProductDialog } from '@/features/products/components/add-product-dialog';
-import { EditInventoryDialog } from '@/features/inventories/components/edit-inventory-dialog';
+import { InventoryIncomeDialogInfo } from '@/features/inventories/components/info-inventory-dialog';
 
 
 export const DialogProvider = () => {
@@ -17,8 +17,8 @@ export const DialogProvider = () => {
     return (
         <>
             <AddInventoryDialog />
-            <EditInventoryDialog />
             <AddProductDialog />
+            <InventoryIncomeDialogInfo />
         </>
     )
 }

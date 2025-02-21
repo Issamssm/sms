@@ -20,7 +20,11 @@ export const InventoryIncomeFormSchema = z.object({
     expiryDate: z.date().optional().nullable(),
     invoiceNumber: z.string().optional(),
     location: z.string().optional(),
-    notes: z.string().optional(),
+    notes: z.string()
+        .optional()
+        .refine((val) => !val || val.split(/\s+/).length <= 60, {
+            message: 'The text must not exceed 60 words',
+        }),
 })
 
 // create InventoryOutcome schema
@@ -41,6 +45,10 @@ export const InventoryOutcomeFormSchema = z.object({
     customerId: z.string().optional(),
     shippedAt: z.date(),
     invoiceNumber: z.string().optional(),
-    notes: z.string().optional(),
+    notes: z.string()
+        .optional()
+        .refine((val) => !val || val.split(/\s+/).length <= 60, {
+            message: 'The text must not exceed 60 words',
+        }),
     location: z.string().optional(),
 })

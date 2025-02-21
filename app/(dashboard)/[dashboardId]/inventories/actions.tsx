@@ -1,6 +1,6 @@
 "use client"
 
-import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import { Eye, MoreHorizontal, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,7 @@ import {
 import { useDeleteInventory } from "@/features/inventories/api/use-delete-inventory";
 
 import { useConfirm } from "@/hooks/use-confirm";
-import { useEditInventory } from "@/features/inventories/hook/use-edit-inventory-dialog";
+import { useInfoInventory } from "@/features/inventories/hook/use-info-inventory-dialog";
 
 
 type Props = {
@@ -27,7 +27,7 @@ export const Actions = ({ id, dashboardId, type }: Props) => {
         "Delete Inventory",
         "Are you sure you want to delete this inventory?"
     )
-    const { onOpen } = useEditInventory()
+    const { onOpen } = useInfoInventory()
 
     const deleteMutation = useDeleteInventory(id, dashboardId, type);
 
@@ -52,8 +52,8 @@ export const Actions = ({ id, dashboardId, type }: Props) => {
                         disabled={deleteMutation.isPending}
                         onClick={() => onOpen(id, type)}
                     >
-                        <Edit className="size-4 mr-2" />
-                        Edit
+                        <Eye className="size-4 mr-2" />
+                        View
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         disabled={deleteMutation.isPending}

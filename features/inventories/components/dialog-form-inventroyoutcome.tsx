@@ -67,9 +67,7 @@ export const DialogFormInventoryOutcome = ({
         defaultValues: {
             quantity: 0,
             sellingPrice: 0,
-            invoiceNumber: "",
             shippedAt: new Date(),
-            location: ""
         },
     })
 
