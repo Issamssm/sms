@@ -4,7 +4,7 @@ import axios from "axios";
 export type CustomerResponse = {
     id: string;
     name: string;
-    contactInfo: string;
+    contactInfo?: string | null;
     address?: string | null;
     dashboardId: string;
     createdAt: Date;

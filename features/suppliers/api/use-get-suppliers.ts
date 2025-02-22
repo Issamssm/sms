@@ -5,7 +5,7 @@ export type SupplierResponse = {
     id: string;
     name: string;
     address?: string | null;
-    contactInfo: string;
+    contactInfo?: string | null;
     dashboardId: string;
     createdAt: Date;
     updatedAt: Date;

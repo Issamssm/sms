@@ -17,52 +17,59 @@ import { data } from "@/navigation";
 export default function Header() {
     const pathname = usePathname();
 
+    function isUUID(str: string) {
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+    }
 
     const getBreadcrumbTitles = (): string[] => {
+        // Split the pathname into parts and filter out empty strings
         const pathParts = pathname.split("/").filter(Boolean);
 
-        if (pathParts.length === 0) {
-            return ["Dashboard"];
+        // If the first part is a dynamic segment (e.g., a UUID), remove it
+        if (pathParts.length > 1 && isUUID(pathParts[0])) {
+            pathParts.shift();
         }
 
-        const breadcrumbs = [];
-
-        // 1. Handle dynamic segments FIRST:
+        // Handle dynamic segments for specific routes first:
         if (pathParts.includes("products")) {
-            breadcrumbs.push("Products"); // Add "Products" as a base breadcrumb
-
             const productIndex = pathParts.indexOf("products");
+            const breadcrumbs = ["Products"];
             if (pathParts.length > productIndex + 1) {
-                // There's a product ID or details after /products/
-                breadcrumbs.push("Product Details");  // Or a more specific name if needed
+                // Assume additional segments indicate details
+                breadcrumbs.push("Product Details");
             }
-            return breadcrumbs; // Dynamic product route handled.
+            return breadcrumbs;
         }
         if (pathParts.includes("inventories")) {
-            breadcrumbs.push("Inventories");
-            return breadcrumbs;
+            return ["Inventories"];
         }
         if (pathParts.includes("categories")) {
-            breadcrumbs.push("Categories");
-            return breadcrumbs;
+            return ["Categories"];
         }
 
-        // 2. Then handle static routes (General, navMain, quickLinks):
-        let currentPath = "/";
+        // Check static routes in General
+        let currentPath = "";
         for (const part of pathParts) {
-            currentPath += part + "/";
-            const generalItem = data.General.find(item => item.url === currentPath.slice(0, -1));
+            currentPath += "/" + part;
+            const generalItem = data.General.find(item => item.url === currentPath);
             if (generalItem) {
-                breadcrumbs.push(generalItem.name);
-                return breadcrumbs;
+                return [generalItem.name];
             }
         }
 
-        // ... (rest of the static route handling code as before: navMain, quickLinks)
+        // Check static routes in quickLinks
+        currentPath = "";
+        for (const part of pathParts) {
+            currentPath += "/" + part;
+            const quickLink = data.quickLinks.find(item => item.url === currentPath);
+            if (quickLink) {
+                return [quickLink.name];
+            }
+        }
 
+        // Fallback breadcrumbs if no matches found
         return ["Dashboard", "Overview"];
     };
-
 
 
     const breadcrumbTitles = getBreadcrumbTitles();

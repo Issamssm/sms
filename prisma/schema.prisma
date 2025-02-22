@@ -156,7 +156,7 @@ model Supplier {
   id                String          @id @default(uuid())
   name              String
   address           String?
-  contactInfo       String
+  contactInfo       String?
   dashboardId       String
   dashboard         Dashboard       @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
   inventoryIncome   InventoryIncome[]
@@ -168,7 +168,7 @@ model Supplier {
 model Customer {
   id                String          @id @default(uuid())
   name              String
-  contactInfo       String
+  contactInfo       String?
   address           String?
   dashboardId       String
   dashboard         Dashboard       @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
